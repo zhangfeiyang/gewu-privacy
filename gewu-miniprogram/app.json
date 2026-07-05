@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/sim/sim",
+    "pages/about/about"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#1565C0",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "格物实验",
+    "backgroundColor": "#F4F6F8",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

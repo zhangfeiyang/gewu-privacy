@@ -1,0 +1,17 @@
+.about { padding: 60rpx 48rpx; }
+.logo { font-size: 120rpx; text-align: center; }
+.name { font-size: 44rpx; font-weight: bold; text-align: center; margin-top: 20rpx; color: #263238; }
+.ver { font-size: 26rpx; color: #90A4AE; text-align: center; margin: 10rpx 0 30rpx; }
+
+.stat-card {
+  background: #E8F1FB; border-radius: 16rpx; padding: 20rpx 26rpx; margin-bottom: 24rpx;
+  font-size: 24rpx; color: #1565C0; line-height: 1.8; text-align: center;
+}
+.setting-card {
+  display: flex; align-items: center; background: #fff; border-radius: 16rpx;
+  padding: 24rpx 26rpx; margin-bottom: 30rpx; box-shadow: 0 3rpx 12rpx rgba(0,0,0,0.06);
+}
+.setting-text { flex: 1; }
+.setting-title { font-size: 30rpx; font-weight: bold; color: #263238; }
+.setting-sub { font-size: 23rpx; color: #78909C; margin-top: 4rpx; }
+.desc { font-size: 28rpx; color: #546E7A; line-height: 1.8; margin-bottom: 24rpx; }

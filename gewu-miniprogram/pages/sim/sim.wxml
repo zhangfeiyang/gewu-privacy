@@ -1,0 +1,32 @@
+<view class="wrap">
+  <view class="stage">
+    <canvas type="2d" id="cv" class="cv" disable-scroll="true" bindtouchend="onCanvasTap"></canvas>
+  </view>
+
+  <scroll-view scroll-y class="panel">
+    <view class="stepper-row" wx:for="{{steppers}}" wx:key="key">
+      <text class="stepper-label">{{item.label}}</text>
+      <view class="stepper-btn" hover-class="stepper-hov" style="color:{{item.color}};border-color:{{item.color}};"
+            data-key="{{item.key}}" data-delta="-1" data-idx="{{index}}" bindtap="onStep">−</view>
+      <text class="stepper-val" style="color:{{item.color}};">{{item.value}}</text>
+      <view class="stepper-btn" hover-class="stepper-hov" style="color:{{item.color}};border-color:{{item.color}};"
+            data-key="{{item.key}}" data-delta="1" data-idx="{{index}}" bindtap="onStep">+</view>
+    </view>
+
+    <view class="actions">
+      <button wx:for="{{actions}}" wx:key="label" data-i="{{index}}" bindtap="onAction"
+              hover-class="btn-hov" class="btn {{item.primary ? 'primary' : ''}}">{{item.label}}</button>
+    </view>
+
+    <view class="ctrl" wx:for="{{controls}}" wx:key="key">
+      <view class="ctrl-row">
+        <text class="ctrl-label">{{item.label}}</text>
+        <text class="ctrl-val">{{item.display}}</text>
+      </view>
+      <slider min="{{item.min}}" max="{{item.max}}" step="{{item.step}}" value="{{item.value}}"
+              data-key="{{item.key}}" data-idx="{{index}}"
+              bindchanging="onSlide" bindchange="onSlide"
+              activeColor="#1565C0" block-size="20" />
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#0c2d4a">
+  <link rel="icon" href="data:,">
+  <title>格物实验</title>
+  <link rel="stylesheet" href="gewu.css">
+</head>
+<body>
+  <div id="app">
+    <main id="home-view" class="view">
+      <header class="home-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">⚛</div>
+          <div>
+            <h1>格物实验</h1>
+            <p id="brand-subtitle">Gewu Lab · 正在加载实验…</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="random-button" class="icon-button" type="button" aria-label="随机探索">🎲</button>
+          <button id="about-button" class="icon-button" type="button" aria-label="关于与设置">⚙</button>
+        </div>
+      </header>
+
+      <section class="home-toolbar">
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="search-input" type="search" autocomplete="off" placeholder="搜索：单摆 / 电路 / 光学 / 能量…">
+          <button id="search-clear" type="button" aria-label="清除搜索">×</button>
+        </label>
+        <nav id="category-chips" class="category-chips" aria-label="实验分类"></nav>
+      </section>
+
+      <div id="home-content" class="home-content">
+        <section class="progress-card">
+          <div class="progress-copy">
+            <strong id="progress-label">🧭 探索进度</strong>
+            <span id="progress-count">0 / 0</span>
+          </div>
+          <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+        </section>
+
+        <section id="favorite-section" class="rail-section hidden">
+          <h2>⭐ 我的收藏</h2>
+          <div id="favorite-rail" class="sim-rail"></div>
+        </section>
+
+        <section id="recent-section" class="rail-section hidden">
+          <h2>🕐 最近使用</h2>
+          <div id="recent-rail" class="sim-rail"></div>
+        </section>
+
+        <div id="sim-groups"></div>
+        <section id="empty-state" class="empty-state hidden">
+          <div>🔬</div>
+          <strong>没有找到相关仿真</strong>
+          <button type="button">清除搜索</button>
+        </section>
+        <p id="home-tip" class="home-tip">长按卡片可收藏</p>
+      </div>
+    </main>
+
+    <main id="sim-view" class="view hidden">
+      <header class="sim-header">
+        <button id="sim-back" class="back-button" type="button" aria-label="返回">‹</button>
+        <div class="sim-heading">
+          <h1 id="sim-title">实验</h1>
+          <p id="sim-subtitle"></p>
+        </div>
+        <button id="sim-share" class="share-button" type="button" aria-label="分享实验">分享</button>
+      </header>
+      <section id="stage" class="stage">
+        <div class="canvas-frame">
+          <canvas id="sim-canvas"></canvas>
+          <div id="canvas-hint" class="canvas-hint hidden">点按画布进行交互</div>
+        </div>
+        <div id="stage-readout" class="readout-dock hidden" aria-live="polite"></div>
+      </section>
+      <section class="control-panel">
+        <div id="stepper-list"></div>
+        <div id="action-list" class="action-list"></div>
+        <div id="control-list"></div>
+      </section>
+    </main>
+
+    <main id="about-view" class="view hidden">
+      <header class="sim-header">
+        <button id="about-back" class="back-button" type="button" aria-label="返回">‹</button>
+        <div class="sim-heading"><h1>关于与设置</h1><p>离线互动科学实验室</p></div>
+        <button id="about-share" class="share-button" type="button">分享</button>
+      </header>
+      <section class="about-content">
+        <div class="about-hero">
+          <div class="about-orbit"><span>⚛</span></div>
+          <h1>格物实验</h1>
+          <p id="about-version">版本 3.7.3</p>
+        </div>
+        <div id="category-stats" class="category-stats"></div>
+        <div class="setting-card">
+          <div><strong>触感反馈</strong><span>命中、碰撞和按钮操作时轻微震动</span></div>
+          <label class="switch"><input id="haptic-switch" type="checkbox"><span></span></label>
+        </div>
+        <div class="setting-card">
+          <div><strong>深色模式</strong><span>降低暗光环境下的屏幕亮度</span></div>
+          <label class="switch"><input id="dark-switch" type="checkbox"><span></span></label>
+        </div>
+        <article class="about-copy">
+          <p>格物实验是一款原生封装、完全离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。</p>
+          <p>拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。</p>
+          <button id="phet-link" type="button">访问 PhET 官网 ↗</button>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>window.module = { exports: {} };</script>
+  <script src="utils/sims.js"></script>
+  <script src="gewu.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "description": "格物实验 · 中学物理互动仿真",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "bigPackageSizeSupport": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.5.0",
+  "appid": "wx78e49c4f49d8bcbd",
+  "projectname": "gewu-physics",
+  "miniprogramRoot": "",
+  "condition": {}
+}
