@@ -19,7 +19,11 @@ Page({
     // 首次进入任意仿真时给一次轻量操作引导
     if (!wx.getStorageSync('gw_hinted')) {
       wx.setStorageSync('gw_hinted', 1);
-      wx.showToast({ title: '拖动下方滑块，观察现象变化', icon: 'none', duration: 2600 });
+      wx.showToast({
+        title: sim.onDragStart ? sim.hint : '拖动下方滑块，观察现象变化',
+        icon: 'none',
+        duration: 2600
+      });
     }
   },
 
@@ -124,11 +128,60 @@ Page({
     this.redrawIfStatic();
   },
 
-  onCanvasTap(e) {
-    if (!this.sim || !this.sim.onTap) return;
+  syncControls() {
+    if (!this.sim) return;
+    this.setData({
+      controls: this.sim.params.map((p, i) => ({
+        ...this.data.controls[i],
+        value: this.pv[p.key],
+        display: p.fmt(this.pv[p.key])
+      })),
+      actions: this.labels()
+    });
+  },
+
+  touchPoint(e) {
     const t = e.changedTouches && e.changedTouches[0];
-    if (!t) return;
-    this.sim.onTap(this.state, this.pv, t.x, t.y);
+    return t ? { x: t.x, y: t.y } : null;
+  },
+
+  onCanvasStart(e) {
+    if (!this.sim) return;
+    const pt = this.touchPoint(e);
+    if (!pt) return;
+    this._touchStart = pt;
+    this._dragging = !!(this.sim.onDragStart &&
+      this.sim.onDragStart(this.state, this.pv, pt.x, pt.y));
+    if (this._dragging) {
+      this.syncControls();
+      this.render();
+    }
+  },
+
+  onCanvasMove(e) {
+    if (!this._dragging || !this.sim || !this.sim.onDragMove) return;
+    const pt = this.touchPoint(e);
+    if (!pt) return;
+    this.sim.onDragMove(this.state, this.pv, pt.x, pt.y);
+    this.syncControls();
+    this.render();
+  },
+
+  onCanvasEnd(e) {
+    if (!this.sim) return;
+    const pt = this.touchPoint(e) || this._touchStart;
+    if (this._dragging) {
+      if (this.sim.onDragEnd && pt) this.sim.onDragEnd(this.state, this.pv, pt.x, pt.y);
+      this._dragging = false;
+      this.syncControls();
+      this.haptic();
+      this.render();
+      return;
+    }
+    if (!pt || !this.sim.onTap) return;
+    const start = this._touchStart || pt;
+    if (Math.hypot(pt.x - start.x, pt.y - start.y) > 12) return;
+    this.sim.onTap(this.state, this.pv, pt.x, pt.y);
     this.redrawIfStatic();
   },
 

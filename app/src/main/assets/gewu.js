@@ -25,6 +25,7 @@
   let lastBuzz = 0;
   let resizeObserver = null;
   let toastTimer = 0;
+  let canvasHintTimer = 0;
   let pendingReadout = null;
   let readoutTimer = 0;
   let lastReadoutUpdate = 0;
@@ -307,10 +308,21 @@
     resetReadoutDock();
     $("sim-title").textContent = sim.title;
     $("sim-subtitle").textContent = sim.sub;
+    applyStageHeight(sim);
     renderSteppers();
     renderActions();
     renderControls();
-    $("canvas-hint").classList.toggle("hidden", !sim.onTap);
+    const hasDirectInteraction = Boolean(sim.onTap || sim.onDragStart);
+    $("canvas-hint").textContent = sim.hint ||
+      (sim.onDragStart ? "直接拖动画面中的物体" : "点按画布进行交互");
+    $("canvas-hint").classList.toggle("hidden", !hasDirectInteraction);
+    clearTimeout(canvasHintTimer);
+    if (hasDirectInteraction) {
+      canvasHintTimer = window.setTimeout(
+        () => $("canvas-hint").classList.add("hidden"),
+        3200,
+      );
+    }
     switchView("sim");
     requestAnimationFrame(() => {
       resizeCanvas();
@@ -319,8 +331,27 @@
     });
     if (!localStorage.getItem("gw_hinted")) {
       localStorage.setItem("gw_hinted", "1");
-      showToast("拖动下方滑块，观察现象变化", 2600);
+      showToast(sim.onDragStart ? sim.hint : "拖动下方滑块，观察现象变化", 2600);
     }
+  }
+
+  function applyStageHeight(sim) {
+    const count = sim.params.length;
+    const ratio = count >= 5 ? 0.34 : count === 4 ? 0.39 :
+      count === 3 ? 0.43 : count === 2 ? 0.47 : 0.5;
+    const height = Math.max(240, Math.min(470, Math.round(window.innerHeight * ratio)));
+    $("stage").style.setProperty("--stage-height", `${height}px`);
+  }
+
+  function syncControlsFromParams() {
+    if (!currentSim) return;
+    currentSim.params.forEach(param => {
+      const value = paramValues[param.key];
+      const input = $(`control-${param.key}`);
+      const output = $(`value-${param.key}`);
+      if (input) input.value = value;
+      if (output) output.textContent = param.fmt(value);
+    });
   }
 
   function renderControls() {
@@ -457,20 +488,64 @@
 
   function setupCanvasInteraction() {
     let down = null;
+    let dragging = false;
+    const point = event => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    };
     canvas.addEventListener("pointerdown", event => {
       down = { x: event.clientX, y: event.clientY };
       canvas.setPointerCapture(event.pointerId);
+      if (currentSim && currentSim.onDragStart) {
+        const p = point(event);
+        dragging = currentSim.onDragStart(state, paramValues, p.x, p.y) === true;
+        if (dragging) {
+          event.preventDefault();
+          syncControlsFromParams();
+          renderActions();
+          renderFrame(0);
+        }
+      }
+    });
+    canvas.addEventListener("pointermove", event => {
+      if (!dragging || !currentSim || !currentSim.onDragMove) return;
+      const p = point(event);
+      currentSim.onDragMove(state, paramValues, p.x, p.y);
+      event.preventDefault();
+      syncControlsFromParams();
+      renderFrame(0);
     });
     canvas.addEventListener("pointerup", event => {
-      if (!down || !currentSim || !currentSim.onTap) return;
+      if (dragging) {
+        const p = point(event);
+        if (currentSim && currentSim.onDragEnd) {
+          currentSim.onDragEnd(state, paramValues, p.x, p.y);
+        }
+        dragging = false;
+        down = null;
+        syncControlsFromParams();
+        renderActions();
+        renderFrame(0);
+        haptic();
+        return;
+      }
+      if (!down || !currentSim) return;
+      if (!currentSim.onTap) { down = null; return; }
       const moved = Math.hypot(event.clientX - down.x, event.clientY - down.y);
       down = null;
       if (moved > 12) return;
-      const rect = canvas.getBoundingClientRect();
-      currentSim.onTap(state, paramValues, event.clientX - rect.left, event.clientY - rect.top);
+      const p = point(event);
+      currentSim.onTap(state, paramValues, p.x, p.y);
       if (currentSim.static) renderFrame(0);
     });
-    canvas.addEventListener("pointercancel", () => { down = null; });
+    canvas.addEventListener("pointercancel", event => {
+      if (dragging && currentSim && currentSim.onDragEnd) {
+        const p = point(event);
+        currentSim.onDragEnd(state, paramValues, p.x, p.y);
+      }
+      dragging = false;
+      down = null;
+    });
   }
 
   function applyTheme(dark) {
@@ -480,7 +555,7 @@
 
   function bindUi() {
     $("brand-subtitle").textContent = `Gewu Lab · ${SIMS.length} 个互动仿真`;
-    $("about-version").textContent = `版本 3.7.3 · ${SIMS.length} 个互动实验`;
+    $("about-version").textContent = `版本 3.8.0 · ${SIMS.length} 个互动实验`;
     $("category-stats").replaceChildren(...CATEGORIES.map(category => {
       const span = document.createElement("span");
       span.textContent = `${category} ${SIMS.filter(sim => sim.category === category).length}`;

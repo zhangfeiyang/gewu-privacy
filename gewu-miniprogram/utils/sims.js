@@ -3,7 +3,8 @@
 //   params:[{key,label,min,max,step,value,fmt}],
 //   actions:[{label, primary, on(state,params)}],   // label 可为 (state)=>string
 //   init():state, step(state,params,dt), draw(ctx,W,H,state,params),
-//   onTap?(state,params,x,y) }
+//   onTap?(state,params,x,y),
+//   onDragStart?/onDragMove?/onDragEnd?(state,params,x,y) }
 
 // ---------- 公共绘制助手 ----------
 // 每个实验单独选择数据卡片锚点，避免统一放在左上角遮挡实验主体。
@@ -306,6 +307,27 @@ const projectile = {
       if (o.maxH + 3 > s.wy) s.wy = o.maxH + 3;
     });
   },
+  hint: '拖动炮管调角度 · 拖动靶子换位置',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return false;
+    if (Math.hypot(x - u.targetX, y - u.targetY) < u.targetR + 24) s.drag = 'target';
+    else if (Math.hypot(x - u.muzzleX, y - u.muzzleY) < 46 ||
+             Math.hypot(x - u.baseX, y - u.baseY) < 34) s.drag = 'cannon';
+    else return false;
+    return true;
+  },
+  onDragMove(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return;
+    if (s.drag === 'target') {
+      s.targetX = Math.max(3, Math.min(s.wx - 2, (x - u.originX) / u.scale));
+    } else if (s.drag === 'cannon') {
+      const deg = Math.atan2(u.baseY - y, x - u.baseX) * 180 / Math.PI;
+      p.angle = Math.max(5, Math.min(85, Math.round(deg)));
+    }
+  },
+  onDragEnd(s) { s.drag = null; },
   draw(ctx, W, H, s, p) {
     const groundY = H * 0.8, originX = W * 0.08, topPad = H * 0.07;
     const scale = Math.min((W - originX - W * 0.04) / s.wx, (groundY - topPad) / s.wy);
@@ -332,8 +354,29 @@ const projectile = {
       ctx.globalAlpha = 1;
     });
     const bx = sx(0), by = sy(p.height), len = Math.max(50, 3 * scale), a = p.angle * Math.PI / 180;
+    if (p.height > 0.05) {
+      const half = Math.min(18, Math.max(10, scale * 0.65));
+      const topY = by + 10;
+      ctx.strokeStyle = '#546E7A'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(bx - half, topY); ctx.lineTo(bx - half * 1.45, groundY);
+      ctx.moveTo(bx + half, topY); ctx.lineTo(bx + half * 1.45, groundY);
+      ctx.moveTo(bx - half, topY); ctx.lineTo(bx + half * 1.45, groundY);
+      ctx.moveTo(bx + half, topY); ctx.lineTo(bx - half * 1.45, groundY);
+      ctx.stroke();
+      ctx.fillStyle = '#37474F'; ctx.fillRect(bx - half - 6, by + 5, half * 2 + 12, 8);
+      ctx.fillStyle = '#455A64';
+      ctx.beginPath(); ctx.arc(bx - half * 1.45, groundY, 6, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(bx + half * 1.45, groundY, 6, 0, 7); ctx.fill();
+    }
     ctx.save(); ctx.translate(bx, by); ctx.rotate(-a); ctx.fillStyle = '#455A64'; ctx.fillRect(0, -7, len, 14); ctx.restore();
     ctx.fillStyle = '#37474F'; ctx.beginPath(); ctx.arc(bx, by, 12, 0, 7); ctx.fill();
+    s._ui = {
+      baseX: bx, baseY: by,
+      muzzleX: bx + Math.cos(a) * len, muzzleY: by - Math.sin(a) * len,
+      targetX: txp, targetY: tcy, targetR: Math.max(tr, 16),
+      originX, scale
+    };
     const ls = s.shots[s.shots.length - 1];
     readout(ctx, [
       ['🎯 命中', s.score + ' / ' + s.attempts + (ls && ls.hit ? '  命中!' : '')],
@@ -358,10 +401,25 @@ const pendulum = {
   ],
   init() { return { theta: 35 * Math.PI / 180, omega: 0, running: false }; },
   step(s, p, dt) {
-    if (!s.running) { s.theta = p.amp * Math.PI / 180; s.omega = 0; return; }
+    if (!s.running) {
+      if (!s.dragging) s.theta = p.amp * Math.PI / 180;
+      s.omega = 0; return;
+    }
     const sub = 8, h = dt / sub;
     for (let i = 0; i < sub; i++) { const a = -(p.gravity / p.length) * Math.sin(s.theta) - p.damping * s.omega; s.omega += a * h; s.theta += s.omega * h; }
   },
+  hint: '抓住摆球拖到任意角度，松手释放',
+  onDragStart(s, p, x, y) {
+    if (!s._ui || Math.hypot(x - s._ui.bx, y - s._ui.by) > 34) return false;
+    s.running = false; s.dragging = true; s.omega = 0; return true;
+  },
+  onDragMove(s, p, x, y) {
+    if (!s._ui) return;
+    const theta = Math.atan2(x - s._ui.px, y - s._ui.py);
+    s.theta = Math.max(-80, Math.min(80, theta * 180 / Math.PI)) * Math.PI / 180;
+    p.amp = Math.max(5, Math.abs(s.theta * 180 / Math.PI));
+  },
+  onDragEnd(s) { s.dragging = false; s.running = true; s.omega = 0; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#EAF3FB'; ctx.fillRect(0, 0, W, H);
     const px = W / 2, py = H * 0.14, scale = (H * 0.72) / 3, lpx = p.length * scale;
@@ -370,6 +428,7 @@ const pendulum = {
     ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.setLineDash([8, 10]); ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + lpx + 30); ctx.stroke(); ctx.setLineDash([]);
     ctx.strokeStyle = '#455A64'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(bx, by); ctx.stroke();
     ctx.fillStyle = '#8E24AA'; ctx.beginPath(); ctx.arc(bx, by, 14, 0, 7); ctx.fill();
+    s._ui = { px, py, bx, by };
     const v = p.length * s.omega, ke = 0.5 * v * v, pe = p.gravity * p.length * (1 - Math.cos(s.theta));
     energyBars(ctx, W, H, [['动能', ke, '#43A047'], ['势能', pe, '#1E88E5'], ['总能', ke + pe, '#455A64']]);
     const T = 2 * Math.PI * Math.sqrt(p.length / p.gravity);
@@ -392,10 +451,27 @@ const springs = {
   ],
   init() { return { u: 0.8, v: 0, running: false }; },
   step(s, p, dt) {
-    if (!s.running) { s.u = p.u0; s.v = 0; return; }
+    if (!s.running) {
+      if (!s.dragging) s.u = p.u0;
+      s.v = 0; return;
+    }
     const sub = 8, h = dt / sub;
     for (let i = 0; i < sub; i++) { const a = -(p.k / p.mass) * s.u - p.damping * s.v; s.v += a * h; s.u += s.v * h; }
   },
+  hint: '按住重物上下拉动，松手后观察振动',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u || x < u.cx - 58 || x > u.cx + 58 || y < u.massTop - 20 || y > u.massTop + u.massH + 28) return false;
+    s.running = false; s.dragging = true; s.v = 0; return true;
+  },
+  onDragMove(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return;
+    const next = (y - u.supportY) / u.scale - u.natural - u.stretch;
+    s.u = Math.max(-1.5, Math.min(1.5, next));
+    p.u0 = s.u; s.v = 0;
+  },
+  onDragEnd(s) { s.dragging = false; s.running = true; s.v = 0; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#EAF6F3'; ctx.fillRect(0, 0, W, H);
     const cx = W / 2, supportY = H * 0.1, stretch = p.mass * p.gravity / p.k;
@@ -407,6 +483,7 @@ const springs = {
     for (let i = 1; i <= coils * 2; i++) { const y = supportY + i * seg, x = i === coils * 2 ? cx : (i % 2 ? cx + 26 : cx - 26); ctx.lineTo(x, y); }
     ctx.stroke();
     const bh = 26 + p.mass * 26; ctx.fillStyle = '#00695C'; ctx.fillRect(cx - 39, massTop, 78, bh);
+    s._ui = { cx, supportY, massTop, massH: bh, scale, natural, stretch };
     const eqY = supportY + (natural + stretch) * scale;
     ctx.strokeStyle = 'rgba(229,57,53,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx - 78, eqY); ctx.lineTo(cx + 78, eqY); ctx.stroke();
     const ke = 0.5 * p.mass * s.v * s.v, pe = 0.5 * p.k * s.u * s.u;
@@ -433,7 +510,13 @@ const skate = {
   ],
   init() { return { xN: 0.5 - Math.sqrt(5 / SKH) / 2, u: 0, thermal: 0, running: false }; },
   step(s, p, dt) {
-    if (!s.running) { const hN = Math.min(Math.max(p.releaseH / SKH, 0), 1); s.xN = 0.5 - Math.sqrt(hN) / 2; s.u = 0; s.thermal = 0; return; }
+    if (!s.running) {
+      if (!s.dragging) {
+        const hN = Math.min(Math.max(p.releaseH / SKH, 0), 1);
+        s.xN = 0.5 - Math.sqrt(hN) / 2;
+      }
+      s.u = 0; s.thermal = 0; return;
+    }
     const sub = 8, h = dt / sub;
     for (let i = 0; i < sub; i++) {
       const m = slopeAt(s.xN), inv = 1 / Math.sqrt(1 + m * m), aT = -p.gravity * m * inv;
@@ -446,6 +529,19 @@ const skate = {
       s.xN = nx;
     }
   },
+  hint: '抓住滑板手沿轨道拖动，松手滑行',
+  onDragStart(s, p, x, y) {
+    if (!s._ui || Math.hypot(x - s._ui.X, y - s._ui.Y) > 42) return false;
+    s.running = false; s.dragging = true; s.u = 0; return true;
+  },
+  onDragMove(s, p, x) {
+    const u = s._ui;
+    if (!u) return;
+    s.xN = Math.max(0.03, Math.min(0.97, (x - u.left) / u.trackW));
+    p.releaseH = Math.max(1, Math.min(6, hM(s.xN)));
+    s.u = 0; s.thermal = 0;
+  },
+  onDragEnd(s) { s.dragging = false; s.running = true; s.u = 0; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#DBEEFB'; ctx.fillRect(0, 0, W, H * 0.86);
     ctx.fillStyle = '#9CCC65'; ctx.fillRect(0, H * 0.86, W, H * 0.14);
@@ -459,6 +555,7 @@ const skate = {
     ctx.fillStyle = '#263238'; ctx.fillRect(-18, -4, 36, 6);
     ctx.fillStyle = '#FF7043'; ctx.beginPath(); ctx.arc(0, -18, 11, 0, 7); ctx.fill();
     ctx.restore();
+    s._ui = { X, Y, left, trackW };
     const ke = 0.5 * p.mass * s.u * s.u, pe = p.mass * p.gravity * hM(s.xN);
     energyBars(ctx, W, H, [['动能', ke, '#43A047'], ['势能', pe, '#1E88E5'], ['热能', s.thermal, '#E53935'], ['总能', ke + pe + s.thermal, '#455A64']]);
     readout(ctx, [['速率', Math.abs(s.u).toFixed(1) + ' m/s'], ['高度', hM(s.xN).toFixed(1) + ' m']]);
@@ -498,6 +595,23 @@ const collision = {
       }
     }
   },
+  hint: '拖动两个小球设置碰撞起点，再点开始',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return false;
+    if (Math.hypot(x - u.x1, y - u.cy) < u.r1 + 22) s.dragBall = 1;
+    else if (Math.hypot(x - u.x2, y - u.cy) < u.r2 + 22) s.dragBall = 2;
+    else return false;
+    s.running = false; return true;
+  },
+  onDragMove(s, p, x) {
+    const u = s._ui;
+    if (!u) return;
+    const wx = (x - u.left) / u.scale;
+    if (s.dragBall === 1) s.x1 = Math.max(u.r1m, Math.min(s.x2 - u.r1m - u.r2m, wx));
+    else if (s.dragBall === 2) s.x2 = Math.min(20 - u.r2m, Math.max(s.x1 + u.r1m + u.r2m, wx));
+  },
+  onDragEnd(s) { s.dragBall = 0; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#F3F1FA'; ctx.fillRect(0, 0, W, H);
     const left = W * 0.06, trackW = W * 0.88, cy = H * 0.5, scale = trackW / 20;
@@ -510,6 +624,10 @@ const collision = {
     };
     ball(s.x1, r1, '#E53935', s.v1, '#B71C1C');
     ball(s.x2, r2, '#1E88E5', s.v2, '#0D47A1');
+    s._ui = {
+      x1: left + s.x1 * scale, x2: left + s.x2 * scale, cy,
+      r1: r1 * scale, r2: r2 * scale, r1m: r1, r2m: r2, left, scale
+    };
     const pp = p.m1 * s.v1 + p.m2 * s.v2, ke = 0.5 * p.m1 * s.v1 * s.v1 + 0.5 * p.m2 * s.v2 * s.v2;
     readout(ctx, [['总动量', pp.toFixed(1)], ['总动能', ke.toFixed(1)], ['v1', s.v1.toFixed(1)], ['v2', s.v2.toFixed(1)]]);
   }
@@ -889,10 +1007,21 @@ const forces = {
     if (s.x < 1) { s.x = 1; s.v = Math.abs(s.v) * 0.3; }
     if (s.x > 19) { s.x = 19; s.v = -Math.abs(s.v) * 0.3; }
   },
+  hint: '按住木箱向左或向右推，松手停止施力',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u || x < u.X - 38 || x > u.X + 38 || y < u.groundY - 70 || y > u.groundY + 16) return false;
+    s.dragging = true; s.dragStartX = x; p.force = 0; return true;
+  },
+  onDragMove(s, p, x) {
+    p.force = Math.max(-60, Math.min(60, (x - s.dragStartX) * 1.2));
+  },
+  onDragEnd(s, p) { s.dragging = false; p.force = 0; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#EAF3FB'; ctx.fillRect(0, 0, W, H * 0.7);
     ctx.fillStyle = '#A5D6A7'; ctx.fillRect(0, H * 0.7, W, H * 0.3);
     const left = W * 0.04, trackW = W * 0.92, scale = trackW / 20, groundY = H * 0.7, X = left + s.x * scale, size = 46;
+    s._ui = { X, groundY };
     ctx.fillStyle = '#43A047'; ctx.fillRect(X - size / 2, groundY - size, size, size);
     if (Math.abs(p.force) > 0.5) { const len = Math.min(Math.abs(p.force) * 1.2, 90) * Math.sign(p.force); arrowSeg(ctx, X, groundY - size - 16, X + len, groundY - size - 16, '#1E88E5', 5); }
     readout(ctx, [['加速度', s.a.toFixed(2) + ' m/s²'], ['速度', s.v.toFixed(2) + ' m/s'], ['净力', (s.a * p.mass).toFixed(1) + ' N']]);
@@ -938,13 +1067,27 @@ const hooke = {
   init() { return { x: 0.25, v: 0 }; },
   step(s, p, dt) {
     // 二阶弹簧动力学：拖动拉力滑块时方块会真实地弹跳到新位置
-    if (dt <= 0) return;
+    if (dt <= 0 || s.dragging) return;
     const xT = p.force / p.k, om = 9, sub = 3, h = dt / sub;
     for (let i = 0; i < sub; i++) {
       const a = om * om * (xT - s.x) - 2 * 0.28 * om * s.v;
       s.v += a * h; s.x += s.v * h;
     }
   },
+  hint: '按住方块压缩或拉伸弹簧，松手回弹',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u || x < u.blockX - 18 || x > u.blockX + 78 || y < u.cy - 52 || y > u.cy + 52) return false;
+    s.dragging = true; s.v = 0; return true;
+  },
+  onDragMove(s, p, x) {
+    const u = s._ui;
+    if (!u) return;
+    const desired = (x - u.wallX - u.natural - 26) / u.scale;
+    p.force = Math.max(-100, Math.min(100, desired * p.k));
+    s.x = p.force / p.k; s.v = 0;
+  },
+  onDragEnd(s, p) { s.dragging = false; p.force = 0; s.v = 0; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#F3F0FB'; ctx.fillRect(0, 0, W, H);
     const cy = H * 0.42, wallX = W * 0.1, natural = W * 0.3, scale = W * 0.4;
@@ -963,6 +1106,7 @@ const hooke = {
     for (let i = 1; i <= coils * 2; i++) { const xx = wallX + i * seg, yy = i === coils * 2 ? cy : (i % 2 ? cy - 14 : cy + 14); ctx.lineTo(i === coils * 2 ? blockX : xx, yy); }
     ctx.stroke();
     ctx.fillStyle = '#5E35B1'; ctx.fillRect(blockX, cy - 26, 52, 52);
+    s._ui = { blockX, cy, wallX, natural, scale };
     if (Math.abs(p.force) > 1) arrowSeg(ctx, blockX + 26, cy - 44, blockX + 26 + Math.sign(p.force) * Math.min(Math.abs(p.force), 90), cy - 44, '#1E88E5', 5);
     // 弹性势能条
     const PE = 0.5 * p.k * s.x * s.x, peMax = 0.5 * 500 * 0.25;
@@ -1152,6 +1296,23 @@ const lever = {
   ],
   actions: [], init() { return { tilt: 0 }; },
   step(s, p, dt) { const net = p.m2 * p.d2 - p.m1 * p.d1, target = Math.max(-0.35, Math.min(0.35, net * 0.03)); s.tilt += (target - s.tilt) * Math.min(1, dt * 3); },
+  hint: '沿杠杆拖动左右重物，直接改变力臂',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return false;
+    if (Math.hypot(x - u.lx, y - u.ly) < 36) s.dragWeight = 'left';
+    else if (Math.hypot(x - u.rx, y - u.ry) < 36) s.dragWeight = 'right';
+    else return false;
+    return true;
+  },
+  onDragMove(s, p, x) {
+    const u = s._ui;
+    if (!u) return;
+    const d = Math.max(1, Math.min(6, Math.abs(x - u.fx) / u.beamLen * 6));
+    if (s.dragWeight === 'left') p.d1 = Math.round(d * 2) / 2;
+    else if (s.dragWeight === 'right') p.d2 = Math.round(d * 2) / 2;
+  },
+  onDragEnd(s) { s.dragWeight = null; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#EFEBE9'; ctx.fillRect(0, 0, W, H);
     const fx = W * 0.5, fy = H * 0.55, beamLen = W * 0.4;
@@ -1162,6 +1323,12 @@ const lever = {
     ctx.fillStyle = '#1E88E5'; ctx.fillRect(lx - 10 - p.m1, 0, 20 + p.m1 * 2, 14 + p.m1 * 4);
     ctx.fillStyle = '#E53935'; ctx.fillRect(rx - 10 - p.m2, 0, 20 + p.m2 * 2, 14 + p.m2 * 4);
     ctx.restore();
+    const co = Math.cos(s.tilt), si = Math.sin(s.tilt);
+    s._ui = {
+      fx, beamLen,
+      lx: fx + lx * co, ly: fy + lx * si + 10,
+      rx: fx + rx * co, ry: fy + rx * si + 10
+    };
     const tl = p.m1 * p.d1, tr = p.m2 * p.d2;
     readout(ctx, [['左力矩', tl.toFixed(1)], ['右力矩', tr.toFixed(1)], ['状态', Math.abs(tl - tr) < 0.05 ? '平衡' : (tl > tr ? '左倾' : '右倾')]]);
   }
@@ -2519,6 +2686,22 @@ const hydraulic = {
     s.d += dt * 0.3;
     if (s.d >= 1) { s.d = 1; s.running = false; s.buzz = (s.buzz | 0) + 1; }
   },
+  hint: '用手指向下按小活塞，观察大活塞举升',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u || x < u.lx - u.lw / 2 - 24 || x > u.lx + u.lw / 2 + 24 ||
+        y < u.lPy - 42 || y > u.lPy + 38) return false;
+    s.running = false; s.dragging = true; return true;
+  },
+  onDragMove(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return;
+    s.d = Math.max(0, Math.min(1, (y - u.startY) / u.travel));
+  },
+  onDragEnd(s) {
+    s.dragging = false;
+    if (s.d >= 0.98) { s.d = 1; s.buzz = (s.buzz | 0) + 1; }
+  },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#E1F5FE'; ctx.fillRect(0, 0, W, H);
     const ratio = p.a2 / p.a1, f2 = p.f1 * ratio;
@@ -2536,6 +2719,7 @@ const hydraulic = {
     ctx.strokeRect(lx - lw / 2, H * 0.3, lw, baseY - H * 0.3);
     ctx.strokeRect(rx - rw / 2, H * 0.28, rw, baseY - H * 0.28);
     ctx.fillStyle = '#546E7A'; ctx.fillRect(lx - lw / 2, lPy - 12, lw, 12); ctx.fillRect(rx - rw / 2, rPy - 12, rw, 12);
+    s._ui = { lx, lw, lPy, startY: H * 0.4, travel: smallTravel };
     // 大活塞上被举起的小车
     ctx.fillStyle = '#E53935'; ctx.fillRect(rx - 34, rPy - 40, 68, 26);
     ctx.fillStyle = '#B71C1C'; ctx.beginPath(); ctx.arc(rx - 20, rPy - 12, 8, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(rx + 20, rPy - 12, 8, 0, 7); ctx.fill();
@@ -2623,9 +2807,25 @@ const potentiometer = {
     const vout = p.vin * p.pos / 100;
     s.phase = (s.phase + vout * 0.014 * dt * 60) % 1; if (s.phase < 0) s.phase += 1;
   },
+  hint: '直接拖动电阻条上的滑片调节输出电压',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u || x < u.barX - 20 || x > u.barX + u.barW + 20 ||
+        y < u.barY - 55 || y > u.barY + 55) return false;
+    s.dragging = true;
+    p.pos = Math.round(Math.max(0, Math.min(100, (x - u.barX) / u.barW * 100)) / 5) * 5;
+    return true;
+  },
+  onDragMove(s, p, x) {
+    const u = s._ui;
+    if (!u) return;
+    p.pos = Math.round(Math.max(0, Math.min(100, (x - u.barX) / u.barW * 100)) / 5) * 5;
+  },
+  onDragEnd(s) { s.dragging = false; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#FFF3E0'; ctx.fillRect(0, 0, W, H);
     const barX = W * 0.1, barY = H * 0.34, barW = W * 0.8;
+    s._ui = { barX, barY, barW };
     ctx.fillStyle = '#FFCC80'; ctx.fillRect(barX, barY, barW, 30);
     ctx.strokeStyle = '#E65100'; ctx.lineWidth = 2; ctx.strokeRect(barX, barY, barW, 30);
     const sx = barX + p.pos / 100 * barW;
@@ -3510,11 +3710,11 @@ const impulse = {
     { key: 'v0', label: '下落速度', min: 2, max: 8, step: 0.5, value: 5, fmt: v => v.toFixed(1) + ' m/s' }
   ],
   actions: [
-    { label: s => s.phase === 'ready' ? '▶ 释放' : '↻ 再来一次', primary: true, on(s, p) { s.phase = 'fall'; s.y = 0.1; s.v = p.v0 * 0.25; s.hist = []; s.t = 0; s.maxF = 0; } }
+    { label: s => s.phase === 'ready' ? '▶ 释放' : '↻ 再来一次', primary: true, on(s, p) { s.phase = 'fall'; s.dragging = false; s.y = 0.1; s.v = p.v0 * 0.25; s.hist = []; s.t = 0; s.maxF = 0; } }
   ],
   init() { return { phase: 'ready', y: 0.1, v: 0, hist: [], t: 0, maxF: 0, buzz: 0 }; },
   step(s, p, dt) {
-    if (dt <= 0 || s.phase === 'ready' || s.phase === 'done') return;
+    if (dt <= 0 || s.dragging || s.phase === 'ready' || s.phase === 'done') return;
     s.t += dt;
     const floorY = 0.72, k = 900 / p.cushion, m = 1;
     if (s.phase === 'fall') {
@@ -3531,17 +3731,54 @@ const impulse = {
     }
     while (s.hist.length > 400) s.hist.shift();
   },
+  hint: '抓住小球调整高度，松手落到缓冲垫',
+  onDragStart(s, p, x, y) {
+    if (!s._ui || Math.hypot(x - s._ui.ballX, y - s._ui.ballY) > 38) return false;
+    s.dragging = true; s.phase = 'ready'; s.v = 0; return true;
+  },
+  onDragMove(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return;
+    s.y = Math.max(0.04, Math.min(0.66,
+      (y - u.topY) * 0.72 / (u.floorY - u.mapTop)));
+    s.v = 0; s.hist = []; s.t = 0; s.maxF = 0;
+  },
+  onDragEnd(s, p) {
+    s.dragging = false; s.phase = 'fall'; s.v = p.v0 * 0.25;
+    s.hist = []; s.t = 0; s.maxF = 0;
+  },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#FBE9E7'; ctx.fillRect(0, 0, W, H);
     const floorPy = H * 0.42;
-    const pad = p.cushion * 30;
-    ctx.fillStyle = '#A5D6A7'; ctx.fillRect(W * 0.24, floorPy, W * 0.28, pad);
-    ctx.fillStyle = '#78909C'; ctx.fillRect(W * 0.24, floorPy + pad, W * 0.28, 8);
-    const by2 = H * 0.06 + Math.min(s.y, 0.78) * (floorPy - H * 0.1) / 0.72;
-    const squish = s.phase === 'contact' ? 1 + Math.min((s.y - 0.72) * 8, 0.5) : 1;
+    const pad = 8 + p.cushion * 28;
+    const penetration = s.phase === 'contact' ? Math.max(0, s.y - 0.72) : 0;
+    const compression = Math.min(pad * 0.68, penetration * H * 0.65);
+    const cushionTop = floorPy + compression;
+    const bulge = compression * 1.15;
+    const padX = W * 0.24 - bulge / 2, padW = W * 0.28 + bulge;
+    ctx.fillStyle = '#81C784';
+    roundRect(ctx, padX, cushionTop, padW, Math.max(3, pad - compression), 6); ctx.fill();
+    ctx.strokeStyle = '#43A047'; ctx.lineWidth = 2; ctx.stroke();
+    if (compression > 1) {
+      ctx.strokeStyle = 'rgba(46,125,50,0.55)'; ctx.lineWidth = 1.5;
+      for (let i = 1; i < 4; i++) {
+        const yy = cushionTop + i * Math.max(3, pad - compression) / 4;
+        ctx.beginPath(); ctx.moveTo(padX + 8, yy); ctx.lineTo(padX + padW - 8, yy); ctx.stroke();
+      }
+    }
+    ctx.fillStyle = '#78909C'; ctx.fillRect(W * 0.24 - 4, floorPy + pad, W * 0.28 + 8, 8);
+    const topY = H * 0.06, mapTop = H * 0.1;
+    const rawBallY = topY + Math.min(s.y, 0.78) * (floorPy - mapTop) / 0.72;
+    const by2 = Math.min(rawBallY, cushionTop - 15);
     ctx.fillStyle = '#FFCC80';
-    ctx.beginPath(); ctx.ellipse(W * 0.38, by2, 14 * squish, 17 / squish, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(W * 0.38, by2, 15, 0, 7); ctx.fill();
     ctx.strokeStyle = '#E65100'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.beginPath(); ctx.arc(W * 0.38 - 5, by2 - 5, 4, 0, 7); ctx.fill();
+    s._ui = {
+      ballX: W * 0.38, ballY: by2, ballRadius: 15,
+      topY, mapTop, floorY: floorPy,
+      cushionCompression: compression, cushionWidth: padW
+    };
     const gx = W * 0.58, gy = H * 0.44, gw = W * 0.36, gh = H * 0.34;
     ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx + gw, gy); ctx.moveTo(gx, gy); ctx.lineTo(gx, gy - gh); ctx.stroke();
@@ -4378,6 +4615,7 @@ function clSlots() {
 }
 const circuitlab = {
   id: 'circuitlab', title: '自由电路搭建', sub: '自选元件 / 任意连接 / 实时求解', category: '电磁', color: '#F4511E', emoji: '🧰',
+  hint: '选择元件后点按插槽，或按住拖动连续铺设',
   params: [],
   actions: [
     { label: s => (s.tool === 'wire' ? '✔ ' : '') + '➖ 导线', on(s) { s.tool = 'wire'; } },
@@ -4439,9 +4677,19 @@ const circuitlab = {
     const existing = s.comps[best.id];
     if (s.tool === 'delete') { if (existing) { delete s.comps[best.id]; s.buzz = (s.buzz | 0) + 1; } }
     else if (existing && existing.type === 'switch' && s.tool !== 'switch') { existing.open = !existing.open; s.buzz = (s.buzz | 0) + 1; }
+    else if (existing && existing.type === s.tool) return;
     else { s.comps[best.id] = { type: s.tool, open: false }; s.buzz = (s.buzz | 0) + 1; }
     s.dirty = true;
   },
+  onDragStart(s, p, x, y) {
+    circuitlab.onTap(s, p, x, y);
+    s.dragBuild = true;
+    return true;
+  },
+  onDragMove(s, p, x, y) {
+    if (s.dragBuild) circuitlab.onTap(s, p, x, y);
+  },
+  onDragEnd(s) { s.dragBuild = false; },
   draw(ctx, W, H, s) {
     s.W = W; s.H = H;
     ctx.fillStyle = '#FFF8F3'; ctx.fillRect(0, 0, W, H);

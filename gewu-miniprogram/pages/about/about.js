@@ -1,7 +1,7 @@
 const { SIMS, CATEGORIES } = require('../../utils/sims.js');
 
 Page({
-  data: { total: 0, cats: '', haptic: true, version: '3.7' },
+  data: { total: 0, cats: '', haptic: true, version: '3.8.0' },
   onLoad() {
     this.setData({
       total: SIMS.length,

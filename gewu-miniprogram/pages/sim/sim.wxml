@@ -1,6 +1,8 @@
 <view class="wrap">
   <view class="stage">
-    <canvas type="2d" id="cv" class="cv" disable-scroll="true" bindtouchend="onCanvasTap"></canvas>
+    <canvas type="2d" id="cv" class="cv" disable-scroll="true"
+            bindtouchstart="onCanvasStart" bindtouchmove="onCanvasMove"
+            bindtouchend="onCanvasEnd" bindtouchcancel="onCanvasEnd"></canvas>
   </view>
 
   <scroll-view scroll-y class="panel">

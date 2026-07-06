@@ -9,7 +9,7 @@ def main() -> None:
             executable_path="/usr/bin/google-chrome-stable",
         )
         page = browser.new_page(
-            viewport={"width": 390, "height": 844},
+            viewport={"width": 390, "height": 720},
             is_mobile=True,
             has_touch=True,
         )
@@ -61,9 +61,9 @@ def main() -> None:
         cdp = page.context.new_cdp_session(page)
         cdp.send(
             "Input.dispatchTouchEvent",
-            {"type": "touchStart", "touchPoints": [{"x": 195, "y": 740}]},
+            {"type": "touchStart", "touchPoints": [{"x": 195, "y": 650}]},
         )
-        for y in (650, 560, 470, 380, 290):
+        for y in (570, 490, 410, 330, 250):
             cdp.send(
                 "Input.dispatchTouchEvent",
                 {"type": "touchMove", "touchPoints": [{"x": 195, "y": y}]},
@@ -85,6 +85,23 @@ def main() -> None:
         first.dispatch_event("pointerup")
         assert page.evaluate("JSON.parse(localStorage.gw_fav).includes('projectile')")
         assert page.locator("#favorite-section").is_visible()
+
+        page.locator('.sim-card[data-id="projectile"]').click()
+        projectile_layout = page.evaluate(
+            """() => {
+              const stage = document.getElementById('stage');
+              const panel = document.querySelector('.control-panel');
+              const lastControl = document.querySelector('#control-list .control:last-child');
+              return {
+                stageHeight: stage.getBoundingClientRect().height,
+                controlsFit: lastControl.getBoundingClientRect().bottom <=
+                  panel.getBoundingClientRect().bottom + 1,
+              };
+            }"""
+        )
+        assert projectile_layout["stageHeight"] < 400
+        assert projectile_layout["controlsFit"]
+        page.locator("#sim-back").click()
 
         page.locator('.sim-card[data-id="mlp"]').click()
         assert page.locator("#sim-title").inner_text() == "全连接神经网络"
@@ -130,6 +147,100 @@ def main() -> None:
         assert separation["separated"]
         assert separation["topLeftPixel"][:3] != [255, 255, 255]
         page.locator("#sim-back").click()
+
+        direct_interaction_results = page.evaluate(
+            """() => {
+              const { SIMS, getSim } = window.module.exports;
+              const canvas = document.createElement('canvas');
+              canvas.width = 390;
+              canvas.height = 420;
+              const ctx = canvas.getContext('2d');
+              const points = {
+                projectile: u => [u.baseX, u.baseY, u.baseX + 100, u.baseY - 25],
+                pendulum: u => [u.bx, u.by, u.px - 70, u.py + 80],
+                springs: u => [u.cx, u.massTop + 10, u.cx, u.massTop - 35],
+                skate: u => [u.X, u.Y, u.left + u.trackW * 0.2, u.Y],
+                collision: u => [u.x1, u.cy, u.x1 + 30, u.cy],
+                forces: u => [u.X, u.groundY - 20, u.X + 35, u.groundY - 20],
+                hooke: u => [u.blockX + 26, u.cy, u.blockX - 25, u.cy],
+                lever: u => [u.lx, u.ly, u.fx - u.beamLen * 0.8, u.ly],
+                hydraulic: u => [u.lx, u.lPy, u.lx, u.startY + u.travel * 0.8],
+                potentiometer: u => [
+                  u.barX + u.barW * 0.5, u.barY,
+                  u.barX + u.barW * 0.8, u.barY
+                ],
+                impulse: u => [u.ballX, u.ballY, u.ballX, u.topY + 35],
+                circuitlab: () => [50, 105, 195, 105],
+              };
+              const errors = [];
+              let exercised = 0;
+              for (const sim of SIMS.filter(item => item.onDragStart)) {
+                try {
+                  const state = sim.init();
+                  const params = Object.fromEntries(sim.params.map(p => [p.key, p.value]));
+                  sim.draw(ctx, 390, 420, state, params);
+                  const makePoint = points[sim.id];
+                  if (!makePoint) throw new Error('missing gesture test point');
+                  const [sx, sy, mx, my] = makePoint(state._ui || {});
+                  if (sim.onDragStart(state, params, sx, sy) !== true) {
+                    throw new Error('drag start rejected');
+                  }
+                  if (sim.onDragMove) sim.onDragMove(state, params, mx, my);
+                  if (sim.onDragEnd) sim.onDragEnd(state, params, mx, my);
+                  sim.step(state, params, 0.016);
+                  sim.draw(ctx, 390, 420, state, params);
+                  exercised++;
+                } catch (error) {
+                  errors.push(`${sim.id}: ${error.stack || error}`);
+                }
+              }
+
+              const projectile = getSim('projectile');
+              const projectileState = projectile.init();
+              const projectileParams = Object.fromEntries(
+                projectile.params.map(p => [p.key, p.value])
+              );
+              projectileParams.height = 6;
+              projectile.draw(ctx, 390, 420, projectileState, projectileParams);
+              const pui = projectileState._ui;
+              const pixels = ctx.getImageData(
+                Math.max(0, Math.round(pui.baseX - 28)),
+                Math.round(pui.baseY + 18),
+                56,
+                Math.max(1, Math.round(420 * 0.8 - pui.baseY - 18))
+              ).data;
+              let supportPixels = 0;
+              for (let i = 0; i < pixels.length; i += 4) {
+                if (pixels[i] < 130 && pixels[i + 1] < 150 && pixels[i + 2] < 160) {
+                  supportPixels++;
+                }
+              }
+
+              const impulse = getSim('impulse');
+              const impulseState = impulse.init();
+              const impulseParams = Object.fromEntries(
+                impulse.params.map(p => [p.key, p.value])
+              );
+              impulseState.phase = 'contact';
+              impulseState.y = 0.78;
+              impulse.draw(ctx, 390, 420, impulseState, impulseParams);
+
+              return {
+                count: SIMS.filter(item => item.onDragStart).length,
+                exercised,
+                errors,
+                supportPixels,
+                impulseRadius: impulseState._ui.ballRadius,
+                cushionCompression: impulseState._ui.cushionCompression,
+              };
+            }"""
+        )
+        assert direct_interaction_results["count"] >= 12
+        assert direct_interaction_results["exercised"] == direct_interaction_results["count"]
+        assert direct_interaction_results["errors"] == []
+        assert direct_interaction_results["supportPixels"] > 20
+        assert direct_interaction_results["impulseRadius"] == 15
+        assert direct_interaction_results["cushionCompression"] > 0
 
         simulation_errors = page.evaluate(
             """() => {
