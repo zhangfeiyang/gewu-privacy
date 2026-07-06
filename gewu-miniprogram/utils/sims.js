@@ -4605,164 +4605,292 @@ function gaussSolve(A, b) {
   }
   return M.map((row, i) => Math.abs(row[i]) > 1e-12 ? row[n] / row[i] : 0);
 }
-const CL_COLS = 4, CL_ROWS = 3;
-const CL_SPEC = { wire: { r: 0.02 }, battery: { r: 0.5, emf: 6 }, bulb: { r: 5 }, resistor: { r: 10 }, switch: { r: 0.02 } };
-function clSlots() {
-  const slots = [];
-  for (let r = 0; r < CL_ROWS; r++) for (let c = 0; c < CL_COLS - 1; c++) slots.push({ id: 'h' + r + c, a: r * CL_COLS + c, b: r * CL_COLS + c + 1, r, c, horiz: true });
-  for (let r = 0; r < CL_ROWS - 1; r++) for (let c = 0; c < CL_COLS; c++) slots.push({ id: 'v' + r + c, a: r * CL_COLS + c, b: (r + 1) * CL_COLS + c, r, c, horiz: false });
-  return slots;
+const CL_SPEC = {
+  battery: { r: 0.5, emf: 6, name: '电源' },
+  bulb: { r: 5, name: '灯泡' },
+  resistor: { r: 10, name: '电阻' },
+  switch: { r: 0.02, name: '开关' }
+};
+const CL_TERM_DX = 37;
+function clTerm(comp, side) {
+  return { x: comp.x + (side === 'R' ? CL_TERM_DX : -CL_TERM_DX), y: comp.y };
+}
+function clKey(id, side) { return id + ':' + side; }
+function clComponent(id, type, x, y) { return { id, type, x, y, open: type === 'switch' }; }
+function clResetLoose(s) {
+  s.items = [
+    clComponent('c1', 'battery', 72, 132),
+    clComponent('c2', 'bulb', 288, 132),
+    clComponent('c3', 'resistor', 288, 232),
+    clComponent('c4', 'switch', 72, 232)
+  ];
+  s.wires = []; s.nextId = 5; s.selected = null; s.dirty = true; s.laidOut = false;
+}
+function clLoadExample(s) {
+  clResetLoose(s);
+  s.items.find(c => c.id === 'c4').open = false;
+  s.wires = [
+    { a: clKey('c1', 'R'), b: clKey('c2', 'L') },
+    { a: clKey('c2', 'R'), b: clKey('c3', 'R') },
+    { a: clKey('c3', 'L'), b: clKey('c4', 'R') },
+    { a: clKey('c4', 'L'), b: clKey('c1', 'L') }
+  ];
+  s.dirty = true;
+}
+function clDistanceToSegment(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay, den = dx * dx + dy * dy || 1;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / den));
+  return Math.hypot(px - (ax + dx * t), py - (ay + dy * t));
+}
+function clPalette(W, H) {
+  const y = H - 30;
+  return ['battery', 'bulb', 'resistor', 'switch'].map((type, i) => ({
+    type, x: W * (0.14 + i * 0.24), y
+  }));
 }
 const circuitlab = {
-  id: 'circuitlab', title: '自由电路搭建', sub: '自选元件 / 任意连接 / 实时求解', category: '电磁', color: '#F4511E', emoji: '🧰',
-  hint: '选择元件后点按插槽，或按住拖动连续铺设',
+  id: 'circuitlab', title: '自由电路搭建', sub: '拖动组件 / 接线柱连线 / 电子流动', category: '电磁', color: '#F4511E', emoji: '🧰',
+  hint: '拖动组件 · 从一个接线柱拖到另一个接线柱',
   params: [],
   actions: [
-    { label: s => (s.tool === 'wire' ? '✔ ' : '') + '➖ 导线', on(s) { s.tool = 'wire'; } },
-    { label: s => (s.tool === 'battery' ? '✔ ' : '') + '🔋 电池', on(s) { s.tool = 'battery'; } },
-    { label: s => (s.tool === 'bulb' ? '✔ ' : '') + '💡 灯泡', on(s) { s.tool = 'bulb'; } },
-    { label: s => (s.tool === 'resistor' ? '✔ ' : '') + '〰 电阻', on(s) { s.tool = 'resistor'; } },
-    { label: s => (s.tool === 'switch' ? '✔ ' : '') + '🔘 开关', on(s) { s.tool = 'switch'; } },
-    { label: s => (s.tool === 'delete' ? '✔ ' : '') + '🗑 删除', on(s) { s.tool = 'delete'; } },
-    { label: '清空', on(s) { s.comps = {}; s.dirty = true; } }
+    { label: '示例回路', primary: true, on(s) { clLoadExample(s); } },
+    { label: '删除选中', on(s) {
+      if (!s.selected) return;
+      s.items = s.items.filter(c => c.id !== s.selected);
+      s.wires = s.wires.filter(w => !w.a.startsWith(s.selected + ':') && !w.b.startsWith(s.selected + ':'));
+      s.selected = null; s.dirty = true;
+    } },
+    { label: '清空导线', on(s) { s.wires = []; s.dirty = true; } }
   ],
   init() {
-    // 预置一个能亮的简单回路：电池 + 导线 + 灯泡
-    return {
-      comps: { v00: { type: 'battery' }, h00: { type: 'wire' }, v01: { type: 'bulb' }, h10: { type: 'wire' } },
-      tool: 'wire', dirty: true, phase: 0, V: null, cur: {}, buzz: 0, W: 360, H: 500
-    };
+    const s = { items: [], wires: [], nextId: 1, selected: null, dirty: true, phase: 0, currents: {}, totalCurrent: 0, buzz: 0, W: 360, H: 500 };
+    clResetLoose(s);
+    return s;
   },
   step(s, p, dt) {
-    if (dt > 0) s.phase += dt;
+    if (dt > 0) s.phase = (s.phase + dt * Math.max(0.35, Math.min(2.2, s.totalCurrent || 0.35))) % 1;
     if (!s.dirty) return;
     s.dirty = false;
-    // 节点电压法：G·V = I，接地取节点0，各节点加微小漏电导保证矩阵非奇异
-    const n = CL_COLS * CL_ROWS;
+    const keys = [];
+    s.items.forEach(c => { keys.push(clKey(c.id, 'L'), clKey(c.id, 'R')); });
+    if (!keys.length) { s.currents = {}; s.totalCurrent = 0; return; }
+    const parent = {};
+    keys.forEach(k => { parent[k] = k; });
+    const find = k => {
+      let r = k;
+      while (parent[r] !== r) r = parent[r];
+      while (parent[k] !== k) { const next = parent[k]; parent[k] = r; k = next; }
+      return r;
+    };
+    const union = (a, b) => {
+      if (!parent[a] || !parent[b]) return;
+      const ra = find(a), rb = find(b);
+      if (ra !== rb) parent[rb] = ra;
+    };
+    s.wires.forEach(w => union(w.a, w.b));
+    const groups = [];
+    keys.forEach(k => { const r = find(k); if (groups.indexOf(r) < 0) groups.push(r); });
+    const node = k => groups.indexOf(find(k));
+    const n = groups.length;
     const G = Array.from({ length: n }, () => new Array(n).fill(0));
     const I = new Array(n).fill(0);
     for (let k = 0; k < n; k++) G[k][k] = 1e-9;
-    const slots = clSlots();
-    slots.forEach(sl => {
-      const c = s.comps[sl.id];
-      if (!c) return;
+    s.items.forEach(c => {
       if (c.type === 'switch' && c.open) return;
-      const spec = CL_SPEC[c.type], g = 1 / spec.r;
-      G[sl.a][sl.a] += g; G[sl.b][sl.b] += g; G[sl.a][sl.b] -= g; G[sl.b][sl.a] -= g;
-      if (spec.emf) { I[sl.a] -= g * spec.emf; I[sl.b] += g * spec.emf; }
+      const spec = CL_SPEC[c.type], a = node(clKey(c.id, 'L')), b = node(clKey(c.id, 'R'));
+      if (a === b) return;
+      const g = 1 / spec.r;
+      G[a][a] += g; G[b][b] += g; G[a][b] -= g; G[b][a] -= g;
+      if (spec.emf) { I[a] -= g * spec.emf; I[b] += g * spec.emf; }
     });
     for (let j = 0; j < n; j++) G[0][j] = 0;
     G[0][0] = 1; I[0] = 0;
     const V = gaussSolve(G, I);
-    s.V = V; s.cur = {};
-    slots.forEach(sl => {
-      const c = s.comps[sl.id];
-      if (!c || (c.type === 'switch' && c.open)) { if (c) s.cur[sl.id] = 0; return; }
-      const spec = CL_SPEC[c.type];
-      s.cur[sl.id] = (V[sl.a] - V[sl.b] + (spec.emf || 0)) / spec.r;
+    s.currents = {}; s.totalCurrent = 0;
+    s.items.forEach(c => {
+      if (c.type === 'switch' && c.open) { s.currents[c.id] = 0; return; }
+      const spec = CL_SPEC[c.type], a = node(clKey(c.id, 'L')), b = node(clKey(c.id, 'R'));
+      const current = a === b && spec.emf ? spec.emf / spec.r : (V[a] - V[b] + (spec.emf || 0)) / spec.r;
+      s.currents[c.id] = current;
+      if (c.type === 'battery') s.totalCurrent = Math.max(s.totalCurrent, Math.abs(current));
     });
-  },
-  onTap(s, p, x, y) {
-    const W = s.W || 360, H = s.H || 500;
-    const gx = W * 0.12, gy = H * 0.1, gw = W * 0.76, gh = H * 0.6;
-    const nx = c => gx + c * gw / (CL_COLS - 1), ny = r => gy + r * gh / (CL_ROWS - 1);
-    let best = null, bd = 1e9;
-    clSlots().forEach(sl => {
-      const mx = sl.horiz ? (nx(sl.c) + nx(sl.c + 1)) / 2 : nx(sl.c);
-      const my = sl.horiz ? ny(sl.r) : (ny(sl.r) + ny(sl.r + 1)) / 2;
-      const d = Math.hypot(x - mx, y - my);
-      if (d < bd) { bd = d; best = sl; }
-    });
-    if (!best || bd > 46) return;
-    const existing = s.comps[best.id];
-    if (s.tool === 'delete') { if (existing) { delete s.comps[best.id]; s.buzz = (s.buzz | 0) + 1; } }
-    else if (existing && existing.type === 'switch' && s.tool !== 'switch') { existing.open = !existing.open; s.buzz = (s.buzz | 0) + 1; }
-    else if (existing && existing.type === s.tool) return;
-    else { s.comps[best.id] = { type: s.tool, open: false }; s.buzz = (s.buzz | 0) + 1; }
-    s.dirty = true;
   },
   onDragStart(s, p, x, y) {
-    circuitlab.onTap(s, p, x, y);
-    s.dragBuild = true;
-    return true;
+    const terminal = (s._ui && s._ui.terminals || []).find(t => Math.hypot(x - t.x, y - t.y) < 20);
+    if (terminal) {
+      s.wireDraft = { from: terminal.key, x: terminal.x, y: terminal.y, tx: x, ty: y };
+      s.selected = terminal.id;
+      return true;
+    }
+    const itemHit = s.items.slice().reverse().find(c => Math.abs(x - c.x) < 34 && Math.abs(y - c.y) < 28);
+    if (itemHit) {
+      s.dragItem = itemHit.id; s.selected = itemHit.id;
+      s.dragOffset = { x: x - itemHit.x, y: y - itemHit.y, sx: x, sy: y };
+      return true;
+    }
+    const paletteHit = clPalette(s.W || 360, s.H || 500).find(t => Math.hypot(x - t.x, y - t.y) < 34);
+    if (paletteHit) {
+      const id = 'c' + s.nextId++;
+      const comp = clComponent(id, paletteHit.type, x, Math.min(y, (s.H || 500) - 78));
+      s.items.push(comp); s.dragItem = id; s.selected = id;
+      s.dragOffset = { x: 0, y: 0, sx: x, sy: y }; s.dirty = true;
+      return true;
+    }
+    return false;
   },
   onDragMove(s, p, x, y) {
-    if (s.dragBuild) circuitlab.onTap(s, p, x, y);
+    if (s.wireDraft) { s.wireDraft.tx = x; s.wireDraft.ty = y; return; }
+    if (!s.dragItem) return;
+    const comp = s.items.find(c => c.id === s.dragItem);
+    if (!comp) return;
+    const W = s.W || 360, H = s.H || 500;
+    comp.x = Math.max(46, Math.min(W - 46, x - s.dragOffset.x));
+    comp.y = Math.max(42, Math.min(H - 76, y - s.dragOffset.y));
+    s.dirty = true;
   },
-  onDragEnd(s) { s.dragBuild = false; },
+  onDragEnd(s, p, x, y) {
+    if (s.wireDraft) {
+      const target = (s._ui && s._ui.terminals || []).find(t =>
+        t.key !== s.wireDraft.from && Math.hypot(x - t.x, y - t.y) < 24);
+      if (target && target.id !== s.wireDraft.from.split(':')[0]) {
+        const a = s.wireDraft.from, b = target.key;
+        const duplicate = s.wires.some(w => (w.a === a && w.b === b) || (w.a === b && w.b === a));
+        if (!duplicate) { s.wires.push({ a, b }); s.buzz = (s.buzz | 0) + 1; }
+        s.dirty = true;
+      }
+      s.wireDraft = null;
+    }
+    if (s.dragItem) {
+      const comp = s.items.find(c => c.id === s.dragItem);
+      const moved = s.dragOffset ? Math.hypot(x - s.dragOffset.sx, y - s.dragOffset.sy) : 99;
+      if (comp && comp.type === 'switch' && moved < 10) {
+        comp.open = !comp.open; s.dirty = true; s.buzz = (s.buzz | 0) + 1;
+      }
+    }
+    s.dragItem = null; s.dragOffset = null;
+  },
   draw(ctx, W, H, s) {
     s.W = W; s.H = H;
+    if (!s.laidOut) {
+      const left = W * 0.2, right = W * 0.8;
+      const top = Math.max(72, Math.min(132, H * 0.32));
+      const bottom = Math.min(H - 105, Math.max(top + 70, H * 0.58));
+      const initial = [
+        ['c1', left, top], ['c2', right, top],
+        ['c3', right, bottom], ['c4', left, bottom]
+      ];
+      initial.forEach(([id, x, y]) => {
+        const comp = s.items.find(item => item.id === id);
+        if (comp) { comp.x = x; comp.y = y; }
+      });
+      s.laidOut = true; s.dirty = true;
+    }
     ctx.fillStyle = '#FFF8F3'; ctx.fillRect(0, 0, W, H);
-    const gx = W * 0.12, gy = H * 0.1, gw = W * 0.76, gh = H * 0.6;
-    const nx = c => gx + c * gw / (CL_COLS - 1), ny = r => gy + r * gh / (CL_ROWS - 1);
-    // 空插槽（浅虚线，提示可放元件）
-    ctx.strokeStyle = 'rgba(0,0,0,0.1)'; ctx.lineWidth = 2; ctx.setLineDash([4, 6]);
-    clSlots().forEach(sl => {
-      if (s.comps[sl.id]) return;
-      ctx.beginPath();
-      if (sl.horiz) { ctx.moveTo(nx(sl.c) + 8, ny(sl.r)); ctx.lineTo(nx(sl.c + 1) - 8, ny(sl.r)); }
-      else { ctx.moveTo(nx(sl.c), ny(sl.r) + 8); ctx.lineTo(nx(sl.c), ny(sl.r + 1) - 8); }
-      ctx.stroke();
+    ctx.fillStyle = '#EDE7E3'; ctx.fillRect(0, H - 62, W, 62);
+    ctx.fillStyle = '#6D4C41'; ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('拖动组件到工作区', W - 8, 16);
+    ctx.fillText('从金色接线柱连线 · 轻点开关', W - 8, 31);
+    ctx.textAlign = 'start';
+    const byKey = {};
+    s.items.forEach(c => {
+      byKey[clKey(c.id, 'L')] = clTerm(c, 'L');
+      byKey[clKey(c.id, 'R')] = clTerm(c, 'R');
     });
-    ctx.setLineDash([]);
-    // 元件
-    let totalP = 0, batI = 0;
-    clSlots().forEach(sl => {
-      const c = s.comps[sl.id];
-      if (!c) return;
-      const x1 = nx(sl.c), y1 = ny(sl.r);
-      const x2 = sl.horiz ? nx(sl.c + 1) : x1, y2 = sl.horiz ? y1 : ny(sl.r + 1);
-      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-      const ux = (x2 - x1) / Math.hypot(x2 - x1, y2 - y1), uy = (y2 - y1) / Math.hypot(x2 - x1, y2 - y1);
-      const px2 = -uy, py2 = ux;
-      const Icur = s.cur[sl.id] || 0;
-      ctx.strokeStyle = '#37474F'; ctx.lineWidth = 3; ctx.lineCap = 'round';
-      if (c.type === 'wire') {
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-      } else if (c.type === 'battery') {
-        batI = Math.max(batI, Math.abs(Icur));
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(mx - ux * 8, my - uy * 8); ctx.moveTo(mx + ux * 8, my + uy * 8); ctx.lineTo(x2, y2); ctx.stroke();
-        ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(mx - ux * 4 - px2 * 14, my - uy * 4 - py2 * 14); ctx.lineTo(mx - ux * 4 + px2 * 14, my - uy * 4 + py2 * 14); ctx.stroke();
-        ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(mx + ux * 4 - px2 * 7, my + uy * 4 - py2 * 7); ctx.lineTo(mx + ux * 4 + px2 * 7, my + uy * 4 + py2 * 7); ctx.stroke();
-      } else if (c.type === 'bulb') {
-        const Pw = Icur * Icur * CL_SPEC.bulb.r; totalP += Pw;
-        const br = Math.min(Pw / 6, 1);
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(mx - ux * 12, my - uy * 12); ctx.moveTo(mx + ux * 12, my + uy * 12); ctx.lineTo(x2, y2); ctx.stroke();
-        if (br > 0.02) { ctx.fillStyle = 'rgba(255,238,88,' + (br * 0.7) + ')'; ctx.beginPath(); ctx.arc(mx, my, 20, 0, 7); ctx.fill(); }
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(mx, my, 11, 0, 7); ctx.fill();
-        ctx.strokeStyle = 'rgba(255,143,0,' + (0.4 + br * 0.6) + ')'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(mx, my, 11, 0, 7); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(mx - 6, my + 5); ctx.lineTo(mx, my - 5); ctx.lineTo(mx + 6, my + 5); ctx.stroke();
-      } else if (c.type === 'resistor') {
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(mx - ux * 16, my - uy * 16); ctx.moveTo(mx + ux * 16, my + uy * 16); ctx.lineTo(x2, y2); ctx.stroke();
-        ctx.strokeStyle = '#EF6C00'; ctx.beginPath(); ctx.moveTo(mx - ux * 16, my - uy * 16);
-        for (let i = 1; i <= 6; i++) { const f = -16 + i * 32 / 6, side = (i % 2 ? 8 : -8), zz = i === 6 ? 0 : side; ctx.lineTo(mx + ux * f + px2 * zz, my + uy * f + py2 * zz); }
-        ctx.stroke();
-      } else if (c.type === 'switch') {
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(mx - ux * 14, my - uy * 14); ctx.moveTo(mx + ux * 14, my + uy * 14); ctx.lineTo(x2, y2); ctx.stroke();
-        ctx.fillStyle = '#37474F';
-        ctx.beginPath(); ctx.arc(mx - ux * 14, my - uy * 14, 4, 0, 7); ctx.fill();
-        ctx.beginPath(); ctx.arc(mx + ux * 14, my + uy * 14, 4, 0, 7); ctx.fill();
-        ctx.strokeStyle = c.open ? '#C62828' : '#2E7D32'; ctx.lineWidth = 3.5; ctx.beginPath();
-        ctx.moveTo(mx - ux * 14, my - uy * 14);
-        if (c.open) ctx.lineTo(mx + ux * 10 + px2 * 16, my + uy * 10 + py2 * 16);
-        else ctx.lineTo(mx + ux * 14, my + uy * 14);
-        ctx.stroke();
-      }
-      // 电流流动动画（方向和速度跟随求解结果）
-      if (Math.abs(Icur) > 0.02 && c.type !== 'bulb') {
-        ctx.fillStyle = '#1565C0';
-        for (let j = 0; j < 2; j++) {
-          let f = (s.phase * Icur * 0.35 + j / 2) % 1; f = (f % 1 + 1) % 1;
-          ctx.beginPath(); ctx.arc(x1 + (x2 - x1) * f, y1 + (y2 - y1) * f, 3, 0, 7); ctx.fill();
+    // 电线与电子
+    ctx.lineCap = 'round';
+    s.wires.forEach((wire, wi) => {
+      const a = byKey[wire.a], b = byKey[wire.b];
+      if (!a || !b) return;
+      ctx.strokeStyle = '#455A64'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      if (s.totalCurrent > 0.02) {
+        const count = Math.max(2, Math.round(Math.hypot(b.x - a.x, b.y - a.y) / 42));
+        for (let j = 0; j < count; j++) {
+          const f = (s.phase + j / count + wi * 0.13) % 1;
+          ctx.fillStyle = '#1E88E5'; ctx.beginPath();
+          ctx.arc(a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f, 4, 0, 7); ctx.fill();
+          ctx.strokeStyle = '#E3F2FD'; ctx.lineWidth = 1; ctx.stroke();
         }
       }
     });
-    // 节点
-    for (let r = 0; r < CL_ROWS; r++) for (let c = 0; c < CL_COLS; c++) {
-      ctx.fillStyle = '#8D6E63'; ctx.beginPath(); ctx.arc(nx(c), ny(r), 5, 0, 7); ctx.fill();
+    if (s.wireDraft) {
+      const a = byKey[s.wireDraft.from];
+      if (a) {
+        ctx.strokeStyle = '#FB8C00'; ctx.lineWidth = 4; ctx.setLineDash([7, 6]);
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(s.wireDraft.tx, s.wireDraft.ty); ctx.stroke();
+        ctx.setLineDash([]);
+      }
     }
-    const toolName = { wire: '导线', battery: '电池(6V)', bulb: '灯泡', resistor: '电阻(10Ω)', switch: '开关', delete: '删除' }[s.tool];
-    readout(ctx, [['当前元件', toolName], ['电池电流', batI.toFixed(2) + ' A'], ['灯泡总功率', totalP.toFixed(1) + ' W'], ['提示', '点击虚线插槽放置元件']]);
+    // 独立组件
+    let totalP = 0, batI = 0;
+    s.items.forEach(c => {
+      const L = clTerm(c, 'L'), R = clTerm(c, 'R'), Icur = s.currents[c.id] || 0;
+      if (s.selected === c.id) {
+        ctx.strokeStyle = '#FF8F00'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+        ctx.strokeRect(c.x - 43, c.y - 31, 86, 62); ctx.setLineDash([]);
+      }
+      ctx.strokeStyle = '#37474F'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(L.x, L.y); ctx.lineTo(c.x - 20, c.y); ctx.moveTo(c.x + 20, c.y); ctx.lineTo(R.x, R.y); ctx.stroke();
+      if (c.type === 'battery') {
+        batI = Math.max(batI, Math.abs(Icur));
+        ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(c.x - 7, c.y - 18); ctx.lineTo(c.x - 7, c.y + 18); ctx.stroke();
+        ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(c.x + 7, c.y - 11); ctx.lineTo(c.x + 7, c.y + 11); ctx.stroke();
+        ctx.font = '11px sans-serif'; ctx.fillStyle = '#D84315'; ctx.fillText('−', c.x - 14, c.y - 21); ctx.fillText('+', c.x + 6, c.y - 21);
+      } else if (c.type === 'bulb') {
+        const Pw = Icur * Icur * CL_SPEC.bulb.r; totalP += Pw;
+        const br = Math.min(Pw / 6, 1);
+        if (br > 0.02) { ctx.fillStyle = 'rgba(255,238,88,' + (0.25 + br * 0.55) + ')'; ctx.beginPath(); ctx.arc(c.x, c.y, 28, 0, 7); ctx.fill(); }
+        ctx.fillStyle = '#FFFDE7'; ctx.beginPath(); ctx.arc(c.x, c.y, 18, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#F9A825'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(c.x, c.y, 18, 0, 7); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(c.x - 9, c.y + 7); ctx.lineTo(c.x, c.y - 7); ctx.lineTo(c.x + 9, c.y + 7); ctx.stroke();
+      } else if (c.type === 'resistor') {
+        ctx.strokeStyle = '#EF6C00'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(c.x - 22, c.y);
+        for (let i = 1; i <= 8; i++) {
+          const xx = c.x - 22 + i * 44 / 8, yy = i === 8 ? c.y : c.y + (i % 2 ? -9 : 9);
+          ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+      } else if (c.type === 'switch') {
+        ctx.fillStyle = '#37474F';
+        ctx.beginPath(); ctx.arc(c.x - 17, c.y, 4, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.arc(c.x + 17, c.y, 4, 0, 7); ctx.fill();
+        ctx.strokeStyle = c.open ? '#C62828' : '#2E7D32'; ctx.lineWidth = 3.5; ctx.beginPath();
+        ctx.moveTo(c.x - 17, c.y);
+        ctx.lineTo(c.open ? c.x + 12 : c.x + 17, c.open ? c.y - 16 : c.y);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#6D4C41'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(CL_SPEC[c.type].name, c.x, c.y + 34); ctx.textAlign = 'start';
+      [L, R].forEach(t => {
+        ctx.fillStyle = '#FFB300'; ctx.beginPath(); ctx.arc(t.x, t.y, 7, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#6D4C41'; ctx.lineWidth = 1.5; ctx.stroke();
+      });
+    });
+    // 底部组件托盘（拖出即可复制）
+    const palette = clPalette(W, H);
+    palette.forEach(pal => {
+      ctx.fillStyle = 'rgba(255,255,255,0.9)'; roundRect(ctx, pal.x - 39, pal.y - 22, 78, 44, 10); ctx.fill();
+      ctx.strokeStyle = '#BCAAA4'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = '#5D4037'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+      const icon = { battery: '🔋', bulb: '💡', resistor: '〰', switch: '⏻' }[pal.type];
+      ctx.fillText(icon + ' ' + CL_SPEC[pal.type].name, pal.x, pal.y + 4); ctx.textAlign = 'start';
+    });
+    const terminals = [];
+    s.items.forEach(c => {
+      ['L', 'R'].forEach(side => {
+        const t = clTerm(c, side);
+        terminals.push({ id: c.id, side, key: clKey(c.id, side), x: t.x, y: t.y });
+      });
+    });
+    s._ui = { terminals, palette, items: s.items.map(c => ({ id: c.id, x: c.x, y: c.y, type: c.type })) };
+    const closed = batI > 0.02;
+    readout(ctx, [
+      ['组件 / 导线', s.items.length + ' / ' + s.wires.length],
+      ['电源电流', batI.toFixed(2) + ' A'],
+      ['灯泡功率', totalP.toFixed(1) + ' W'],
+      ['状态', closed ? '回路闭合·电子流动' : '拖动接线柱完成回路']
+    ]);
   }
 };
 

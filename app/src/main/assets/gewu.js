@@ -555,7 +555,7 @@
 
   function bindUi() {
     $("brand-subtitle").textContent = `Gewu Lab · ${SIMS.length} 个互动仿真`;
-    $("about-version").textContent = `版本 3.8.0 · ${SIMS.length} 个互动实验`;
+    $("about-version").textContent = `版本 3.8.1 · ${SIMS.length} 个互动实验`;
     $("category-stats").replaceChildren(...CATEGORIES.map(category => {
       const span = document.createElement("span");
       span.textContent = `${category} ${SIMS.filter(sim => sim.category === category).length}`;
@@ -600,7 +600,7 @@
     });
     setupCanvasInteraction();
     resizeObserver = new ResizeObserver(resizeCanvas);
-    resizeObserver.observe($("stage"));
+    resizeObserver.observe(canvas.parentElement);
     document.addEventListener("visibilitychange", () => {
       window.setAppVisible(!document.hidden);
     });

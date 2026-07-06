@@ -148,6 +148,56 @@ def main() -> None:
         assert separation["topLeftPixel"][:3] != [255, 255, 255]
         page.locator("#sim-back").click()
 
+        page.locator('.sim-card[data-id="circuitlab"]').click()
+        page.wait_for_function(
+            "() => document.getElementById('stage-readout').textContent"
+            ".includes('组件 / 导线')"
+        )
+        circuit_canvas = page.locator("#sim-canvas").bounding_box()
+        assert circuit_canvas is not None
+        canvas_width = circuit_canvas["width"]
+        canvas_height = circuit_canvas["height"]
+        circuit_top = max(72, min(132, canvas_height * 0.32))
+        start_x = circuit_canvas["x"] + canvas_width * 0.2 + 37
+        start_y = circuit_canvas["y"] + circuit_top
+        end_x = circuit_canvas["x"] + canvas_width * 0.8 - 37
+        end_y = start_y
+        cdp.send(
+            "Input.dispatchTouchEvent",
+            {"type": "touchStart", "touchPoints": [{"x": start_x, "y": start_y}]},
+        )
+        cdp.send(
+            "Input.dispatchTouchEvent",
+            {"type": "touchMove", "touchPoints": [{"x": end_x, "y": end_y}]},
+        )
+        cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
+        page.wait_for_function(
+            "() => document.getElementById('stage-readout').textContent"
+            ".includes('4 / 1')"
+        )
+        page.locator('#action-list button[data-index="0"]').click()
+        page.wait_for_function(
+            "() => document.getElementById('stage-readout').textContent"
+            ".includes('回路闭合·电子流动')"
+        )
+        circuit_canvas_size = page.evaluate(
+            """() => {
+              const canvas = document.getElementById('sim-canvas');
+              const rect = canvas.getBoundingClientRect();
+              const dpr = Math.min(devicePixelRatio || 1, 3);
+              return {
+                widthMatches: canvas.width === Math.round(rect.width * dpr),
+                heightMatches: canvas.height === Math.round(rect.height * dpr),
+              };
+            }"""
+        )
+        assert circuit_canvas_size == {
+            "widthMatches": True,
+            "heightMatches": True,
+        }
+        page.screenshot(path="/tmp/circuitlab-android-ui.png")
+        page.locator("#sim-back").click()
+
         direct_interaction_results = page.evaluate(
             """() => {
               const { SIMS, getSim } = window.module.exports;
@@ -170,7 +220,10 @@ def main() -> None:
                   u.barX + u.barW * 0.8, u.barY
                 ],
                 impulse: u => [u.ballX, u.ballY, u.ballX, u.topY + 35],
-                circuitlab: () => [50, 105, 195, 105],
+                circuitlab: u => [
+                  u.items[0].x, u.items[0].y,
+                  u.items[0].x + 35, u.items[0].y + 24
+                ],
               };
               const errors = [];
               let exercised = 0;
@@ -225,6 +278,44 @@ def main() -> None:
               impulseState.y = 0.78;
               impulse.draw(ctx, 390, 420, impulseState, impulseParams);
 
+              const circuitlab = getSim('circuitlab');
+              const circuitState = circuitlab.init();
+              const circuitParams = {};
+              circuitlab.draw(ctx, 390, 420, circuitState, circuitParams);
+              const terminal = key =>
+                circuitState._ui.terminals.find(item => item.key === key);
+              const connect = (from, to) => {
+                const a = terminal(from);
+                const b = terminal(to);
+                if (!circuitlab.onDragStart(
+                  circuitState, circuitParams, a.x, a.y
+                )) {
+                  throw new Error(`wire start rejected: ${from}`);
+                }
+                circuitlab.onDragMove(circuitState, circuitParams, b.x, b.y);
+                circuitlab.onDragEnd(circuitState, circuitParams, b.x, b.y);
+                circuitlab.draw(ctx, 390, 420, circuitState, circuitParams);
+              };
+              connect('c1:R', 'c2:L');
+              connect('c2:R', 'c3:R');
+              connect('c3:L', 'c4:R');
+              connect('c4:L', 'c1:L');
+              const switchItem = circuitState.items.find(item => item.id === 'c4');
+              circuitlab.onDragStart(
+                circuitState, circuitParams, switchItem.x, switchItem.y
+              );
+              circuitlab.onDragEnd(
+                circuitState, circuitParams, switchItem.x, switchItem.y
+              );
+              circuitlab.step(circuitState, circuitParams, 0.016);
+              circuitlab.draw(ctx, 390, 420, circuitState, circuitParams);
+              const paletteBattery = circuitState._ui.palette[0];
+              circuitlab.onDragStart(
+                circuitState, circuitParams, paletteBattery.x, paletteBattery.y
+              );
+              circuitlab.onDragMove(circuitState, circuitParams, 190, 320);
+              circuitlab.onDragEnd(circuitState, circuitParams, 190, 320);
+
               return {
                 count: SIMS.filter(item => item.onDragStart).length,
                 exercised,
@@ -232,6 +323,10 @@ def main() -> None:
                 supportPixels,
                 impulseRadius: impulseState._ui.ballRadius,
                 cushionCompression: impulseState._ui.cushionCompression,
+                circuitWires: circuitState.wires.length,
+                circuitCurrent: circuitState.totalCurrent,
+                circuitSwitchOpen: switchItem.open,
+                circuitComponents: circuitState.items.length,
               };
             }"""
         )
@@ -241,6 +336,10 @@ def main() -> None:
         assert direct_interaction_results["supportPixels"] > 20
         assert direct_interaction_results["impulseRadius"] == 15
         assert direct_interaction_results["cushionCompression"] > 0
+        assert direct_interaction_results["circuitWires"] == 4
+        assert direct_interaction_results["circuitCurrent"] > 0.3
+        assert direct_interaction_results["circuitSwitchOpen"] is False
+        assert direct_interaction_results["circuitComponents"] == 5
 
         simulation_errors = page.evaluate(
             """() => {
