@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "org.phetlike.projectile"
+    namespace = "com.zhangfeiyang.gewu"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.phetlike.projectile"
+        applicationId = "com.zhangfeiyang.gewu"
         minSdk = 24
         targetSdk = 34
         versionCode = 43

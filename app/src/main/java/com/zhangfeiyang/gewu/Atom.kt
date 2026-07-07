@@ -1,4 +1,4 @@
-package org.phetlike.projectile
+package com.zhangfeiyang.gewu
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
