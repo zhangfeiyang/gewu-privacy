@@ -89,27 +89,34 @@
     <main id="about-view" class="view hidden">
       <header class="sim-header">
         <button id="about-back" class="back-button" type="button" aria-label="返回">‹</button>
-        <div class="sim-heading"><h1>关于与设置</h1><p>离线互动科学实验室</p></div>
+        <div class="sim-heading"><h1 id="about-title">关于与设置</h1><p id="about-subtitle">离线互动科学实验室</p></div>
         <button id="about-share" class="share-button" type="button">分享</button>
       </header>
       <section class="about-content">
         <div class="about-hero">
           <div class="about-orbit"><span>⚛</span></div>
-          <h1>格物实验</h1>
-          <p id="about-version">版本 3.8.1</p>
+          <h1 id="about-hero-title">格物实验</h1>
+          <p id="about-version">版本 3.9.0</p>
         </div>
         <div id="category-stats" class="category-stats"></div>
         <div class="setting-card">
-          <div><strong>触感反馈</strong><span>命中、碰撞和按钮操作时轻微震动</span></div>
+          <div><strong id="haptic-title">触感反馈</strong><span id="haptic-subtitle">命中、碰撞和按钮操作时轻微震动</span></div>
           <label class="switch"><input id="haptic-switch" type="checkbox"><span></span></label>
         </div>
         <div class="setting-card">
-          <div><strong>深色模式</strong><span>降低暗光环境下的屏幕亮度</span></div>
+          <div><strong id="dark-title">深色模式</strong><span id="dark-subtitle">降低暗光环境下的屏幕亮度</span></div>
           <label class="switch"><input id="dark-switch" type="checkbox"><span></span></label>
         </div>
+        <div class="setting-card">
+          <div><strong id="language-title">语言</strong><span id="language-subtitle">选择界面和实验文字语言</span></div>
+          <div class="language-toggle" role="group" aria-label="Language">
+            <button id="lang-zh" data-lang-option="zh" type="button">中文</button>
+            <button id="lang-en" data-lang-option="en" type="button">English</button>
+          </div>
+        </div>
         <article class="about-copy">
-          <p>格物实验是一款原生封装、完全离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。</p>
-          <p>拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。</p>
+          <p id="about-copy-1">格物实验是一款原生封装、完全离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。</p>
+          <p id="about-copy-2">拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。</p>
           <button id="phet-link" type="button">访问 PhET 官网 ↗</button>
         </article>
       </section>

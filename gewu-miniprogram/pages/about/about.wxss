@@ -14,4 +14,12 @@
 .setting-text { flex: 1; }
 .setting-title { font-size: 30rpx; font-weight: bold; color: #263238; }
 .setting-sub { font-size: 23rpx; color: #78909C; margin-top: 4rpx; }
+.lang-toggle {
+  display: flex; background: #EEF3F7; border-radius: 999rpx; padding: 4rpx; margin-left: 16rpx;
+}
+.lang-btn {
+  min-width: 90rpx; text-align: center; padding: 10rpx 18rpx; border-radius: 999rpx;
+  font-size: 24rpx; font-weight: bold; color: #607D8B;
+}
+.lang-btn.active { color: #fff; background: #1565C0; }
 .desc { font-size: 28rpx; color: #546E7A; line-height: 1.8; margin-bottom: 24rpx; }

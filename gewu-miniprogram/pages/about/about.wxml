@@ -1,20 +1,29 @@
 <view class="about">
   <view class="logo">⚛️</view>
-  <view class="name">格物实验</view>
-  <view class="ver">版本 {{version}} · {{total}} 个互动实验</view>
+  <view class="name">{{L.appName}}</view>
+  <view class="ver">{{L.versionLine}}</view>
 
   <view class="stat-card">{{cats}}</view>
 
   <view class="setting-card">
     <view class="setting-text">
-      <view class="setting-title">触感反馈</view>
-      <view class="setting-sub">命中 / 碰撞 / 按钮操作时轻微震动</view>
+      <view class="setting-title">{{L.haptic}}</view>
+      <view class="setting-sub">{{L.hapticSub}}</view>
     </view>
     <switch checked="{{haptic}}" bindchange="toggleHaptic" color="#1565C0" />
   </view>
 
-  <view class="desc">
-    格物实验是一款原生、离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。取“格物致知”之意，教学理念受 PhET (phet.colorado.edu) 启发。
+  <view class="setting-card">
+    <view class="setting-text">
+      <view class="setting-title">{{L.language}}</view>
+      <view class="setting-sub">{{L.languageSub}}</view>
+    </view>
+    <view class="lang-toggle">
+      <view class="lang-btn {{lang === 'zh' ? 'active' : ''}}" data-lang="zh" bindtap="switchLanguage">{{L.zh}}</view>
+      <view class="lang-btn {{lang === 'en' ? 'active' : ''}}" data-lang="en" bindtap="switchLanguage">{{L.en}}</view>
+    </view>
   </view>
-  <view class="desc">拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏；点右上角「···」可把实验分享给朋友。</view>
+
+  <view class="desc">{{L.desc1}}</view>
+  <view class="desc">{{L.desc2}}</view>
 </view>

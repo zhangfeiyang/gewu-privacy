@@ -1,26 +1,34 @@
-const { getSim } = require('../../utils/sims.js');
+const { getSim, tr, setLanguage, simText, wrapCanvasContext } = require('../../utils/sims.js');
+
+const LANG_KEY = 'gw_lang';
+
+function applyStoredLanguage() {
+  setLanguage(wx.getStorageSync(LANG_KEY) || 'zh');
+}
 
 Page({
   data: { title: '', controls: [], actions: [], steppers: [] },
 
   onLoad(q) {
+    applyStoredLanguage();
     const sim = getSim(q.id);
-    if (!sim) { wx.showToast({ title: '未找到仿真', icon: 'none' }); return; }
+    if (!sim) { wx.showToast({ title: tr('未找到仿真'), icon: 'none' }); return; }
     this.sim = sim;
     this.state = sim.init();
     this._buzz = this.state.buzz | 0;
     this.pv = {};
     const controls = sim.params.map(p => {
       this.pv[p.key] = p.value;
-      return { key: p.key, label: p.label, min: p.min, max: p.max, step: p.step, value: p.value, display: p.fmt(p.value) };
+      return { key: p.key, label: tr(p.label), min: p.min, max: p.max, step: p.step, value: p.value, display: tr(p.fmt(p.value)) };
     });
-    this.setData({ title: sim.title, controls, actions: this.labels(), steppers: this.stepperData() });
-    wx.setNavigationBarTitle({ title: sim.title });
+    const text = simText(sim);
+    this.setData({ title: text.title, controls, actions: this.labels(), steppers: this.stepperData() });
+    wx.setNavigationBarTitle({ title: text.title });
     // 首次进入任意仿真时给一次轻量操作引导
     if (!wx.getStorageSync('gw_hinted')) {
       wx.setStorageSync('gw_hinted', 1);
       wx.showToast({
-        title: sim.onDragStart ? sim.hint : '拖动下方滑块，观察现象变化',
+        title: sim.onDragStart ? tr(sim.hint) : tr('拖动下方滑块，观察现象变化'),
         icon: 'none',
         duration: 2600
       });
@@ -34,21 +42,21 @@ Page({
 
   // 分享当前实验给好友/群
   onShareAppMessage() {
-    const t = this.sim ? this.sim.title : '格物实验';
+    const t = this.sim ? simText(this.sim).title : tr('格物实验');
     const id = this.sim ? this.sim.id : '';
-    return { title: '格物实验 · ' + t + ' — 一起动手做实验', path: '/pages/sim/sim?id=' + id };
+    return { title: tr('格物实验') + ' · ' + t + ' — ' + tr('一起动手做实验'), path: '/pages/sim/sim?id=' + id };
   },
 
   labels() {
     return this.sim.actions.map(a => ({
-      label: typeof a.label === 'function' ? a.label(this.state) : a.label,
+      label: tr(typeof a.label === 'function' ? a.label(this.state) : a.label),
       primary: !!a.primary
     }));
   },
 
   stepperData() {
     return (this.sim.steppers || []).map(st => ({
-      key: st.key, label: st.label, color: st.color, value: st.get(this.state)
+      key: st.key, label: tr(st.label), color: st.color, value: st.get(this.state)
     }));
   },
 
@@ -59,6 +67,7 @@ Page({
         if (!res[0]) return;
         const canvas = res[0].node, w = res[0].width, h = res[0].height;
         const ctx = canvas.getContext('2d');
+        wrapCanvasContext(ctx);
         canvas.width = w * dpr; canvas.height = h * dpr;
         ctx.scale(dpr, dpr);
         this.canvas = canvas; this.ctx = ctx; this.cw = w; this.ch = h;
@@ -104,7 +113,7 @@ Page({
     const v = e.detail.value;
     this.pv[key] = v;
     const p = this.sim.params.find(p => p.key === key);
-    this.setData({ ['controls[' + idx + '].display']: p.fmt(v) });
+    this.setData({ ['controls[' + idx + '].display']: tr(p.fmt(v)) });
     this.redrawIfStatic();
   },
 
@@ -134,7 +143,8 @@ Page({
       controls: this.sim.params.map((p, i) => ({
         ...this.data.controls[i],
         value: this.pv[p.key],
-        display: p.fmt(this.pv[p.key])
+        label: tr(p.label),
+        display: tr(p.fmt(this.pv[p.key]))
       })),
       actions: this.labels()
     });
@@ -192,6 +202,14 @@ Page({
   // 切后台 / 息屏时停止动画，回到前台再恢复，避免无意义耗电
   onHide() { this.pauseLoop(); },
   onShow() {
+    applyStoredLanguage();
+    if (this.sim) {
+      const text = simText(this.sim);
+      wx.setNavigationBarTitle({ title: text.title });
+      this.setData({ title: text.title, actions: this.labels(), steppers: this.stepperData() });
+      this.syncControls();
+      this.redrawIfStatic();
+    }
     if (this.canvas && this.sim && !this.sim.static && !this.raf) { this.last = 0; this.start(); }
   },
 

@@ -1,4 +1,4 @@
-const { SIMS, CATEGORIES } = require('../../utils/sims.js');
+const { SIMS, CATEGORIES, tr, setLanguage, simText } = require('../../utils/sims.js');
 
 // 用标准 rgba() 而非 8 位 hex alpha（部分安卓 WebView 对 8 位 hex 支持不稳定）。
 function toRgba(hex, alpha) {
@@ -11,9 +11,40 @@ function toRgba(hex, alpha) {
 const FAV_KEY = 'gw_fav';
 const RECENT_KEY = 'gw_recent';
 const VISITED_KEY = 'gw_visited';
+const LANG_KEY = 'gw_lang';
+
+function applyStoredLanguage() {
+  setLanguage(wx.getStorageSync(LANG_KEY) || 'zh');
+}
 
 Page({
-  data: { groups: [], keyword: '', total: 0, empty: false, progress: 0, visitedCount: 0, favs: [], recent: [], catChips: [], jumpId: '' },
+  data: { groups: [], keyword: '', total: 0, empty: false, progress: 0, visitedCount: 0, favs: [], recent: [], catChips: [], jumpId: '', L: {} },
+
+  labels() {
+    return {
+      appName: tr('格物实验'),
+      subtitle: 'Gewu Lab · ' + SIMS.length + ' ' + tr('个互动物理仿真'),
+      searchPlaceholder: tr('搜索：单摆 / 电路 / 光学 / 能量…'),
+      progressLabel: tr('探索进度'),
+      progressDone: tr('全部探索完成！'),
+      favorites: tr('我的收藏'),
+      recent: tr('最近使用'),
+      clearSearch: tr('清除搜索'),
+      emptyPrefix: tr('没有找到「'),
+      emptySuffix: tr('」相关的仿真'),
+      tip: tr('长按卡片可收藏') + ' · ' + tr('共') + ' ' + SIMS.length + ' ' + tr('个仿真')
+    };
+  },
+
+  rebuildMeta() {
+    this.metaById = {};
+    this.all = SIMS.map(s => {
+      const text = simText(s);
+      const m = { id: s.id, title: text.title, sub: text.sub, emoji: s.emoji, color: s.color, bg: toRgba(s.color, 0.14), category: text.category, rawTitle: s.title, rawSub: s.sub, rawCategory: s.category };
+      this.metaById[s.id] = m;
+      return m;
+    });
+  },
 
   jumpCat(e) {
     const id = e.currentTarget.dataset.id;
@@ -23,21 +54,29 @@ Page({
   },
 
   onLoad() {
-    this.metaById = {};
-    this.all = SIMS.map(s => {
-      const m = { id: s.id, title: s.title, sub: s.sub, emoji: s.emoji, color: s.color, bg: toRgba(s.color, 0.14), category: s.category };
-      this.metaById[s.id] = m;
-      return m;
-    });
-    this.setData({
-      total: SIMS.length,
-      catChips: CATEGORIES.map(c => ({ name: c, count: SIMS.filter(s => s.category === c).length })).filter(c => c.count > 0)
-    });
+    applyStoredLanguage();
+    this.rebuildMeta();
+    wx.setNavigationBarTitle({ title: tr('格物实验') });
+    this.setData({ total: SIMS.length, L: this.labels() });
+    this.refreshCategoryChips();
     this.refresh('');
   },
 
   // 从别的页面返回时重新读取收藏/最近/进度
-  onShow() { this.refresh(this.data.keyword); },
+  onShow() {
+    applyStoredLanguage();
+    wx.setNavigationBarTitle({ title: tr('格物实验') });
+    this.rebuildMeta();
+    this.setData({ L: this.labels() });
+    this.refreshCategoryChips();
+    this.refresh(this.data.keyword);
+  },
+
+  refreshCategoryChips() {
+    this.setData({
+      catChips: CATEGORIES.map(c => ({ name: tr(c), raw: c, count: SIMS.filter(s => s.category === c).length })).filter(c => c.count > 0)
+    });
+  },
 
   refresh(kw) {
     const fav = wx.getStorageSync(FAV_KEY) || [];
@@ -49,11 +88,11 @@ Page({
 
     const k = (kw || '').trim();
     const kl = k.toLowerCase();
-    const match = s => !k || s.title.indexOf(k) >= 0 || s.category.indexOf(k) >= 0 || s.sub.toLowerCase().indexOf(kl) >= 0;
+    const match = s => !k || [s.title, s.category, s.sub, s.rawTitle, s.rawCategory, s.rawSub].some(text => String(text).toLowerCase().indexOf(kl) >= 0);
     const groups = CATEGORIES.map((cat, ci) => ({
-      name: cat,
+      name: tr(cat),
       aid: 'cat' + ci,   // 锚点用 CATEGORIES 固定序号，搜索过滤后跳转依然正确
-      items: this.all.filter(s => s.category === cat && match(s))
+      items: this.all.filter(s => s.rawCategory === cat && match(s))
     })).filter(g => g.items.length > 0);
 
     this.setData({
@@ -83,7 +122,7 @@ Page({
   randomSim() {
     const s = this.all[Math.floor(Math.random() * this.all.length)];
     try { wx.vibrateShort({ type: 'light', fail() {} }); } catch (err) {}
-    wx.showToast({ title: '随机探索：' + s.title, icon: 'none', duration: 1200 });
+    wx.showToast({ title: tr('随机探索：') + s.title, icon: 'none', duration: 1200 });
     this.go(s.id);
   },
 
@@ -91,8 +130,8 @@ Page({
     const id = e.currentTarget.dataset.id;
     let fav = wx.getStorageSync(FAV_KEY) || [];
     const i = fav.indexOf(id);
-    if (i >= 0) { fav.splice(i, 1); wx.showToast({ title: '已取消收藏', icon: 'none' }); }
-    else { fav.push(id); wx.showToast({ title: '已收藏 ⭐', icon: 'none' }); try { wx.vibrateShort({ type: 'light', fail() {} }); } catch (err) {} }
+    if (i >= 0) { fav.splice(i, 1); wx.showToast({ title: tr('已取消收藏'), icon: 'none' }); }
+    else { fav.push(id); wx.showToast({ title: tr('已收藏 ⭐'), icon: 'none' }); try { wx.vibrateShort({ type: 'light', fail() {} }); } catch (err) {} }
     wx.setStorageSync(FAV_KEY, fav);
     this.refresh(this.data.keyword);
   },
@@ -100,6 +139,6 @@ Page({
   openAbout() { wx.navigateTo({ url: '/pages/about/about' }); },
 
   onShareAppMessage() {
-    return { title: '格物实验 — ' + SIMS.length + ' 个互动物理化学仿真实验室', path: '/pages/index/index' };
+    return { title: tr('格物实验') + ' — ' + SIMS.length + ' ' + tr('个互动物理化学仿真实验室'), path: '/pages/index/index' };
   }
 });

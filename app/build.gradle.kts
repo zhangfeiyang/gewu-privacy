@@ -11,8 +11,8 @@ android {
         applicationId = "org.phetlike.projectile"
         minSdk = 24
         targetSdk = 34
-        versionCode = 42
-        versionName = "3.8.1"
+        versionCode = 43
+        versionName = "3.9.0"
     }
 
     buildTypes {

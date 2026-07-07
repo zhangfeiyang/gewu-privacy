@@ -1,11 +1,22 @@
 (() => {
   "use strict";
 
-  const { SIMS, CATEGORIES, getSim } = window.module.exports;
+  const {
+    SIMS,
+    CATEGORIES,
+    getSim,
+    tr,
+    setLanguage,
+    getLanguage,
+    simText,
+    wrapCanvasContext,
+  } = window.module.exports;
   const byId = Object.fromEntries(SIMS.map(sim => [sim.id, sim]));
   const FAV_KEY = "gw_fav";
   const RECENT_KEY = "gw_recent";
   const VISITED_KEY = "gw_visited";
+  const LANG_KEY = "gw_lang";
+  const VERSION = "3.9.0";
 
   const $ = id => document.getElementById(id);
   const homeView = $("home-view");
@@ -14,6 +25,8 @@
   const homeContent = $("home-content");
   const canvas = $("sim-canvas");
   const ctx = canvas.getContext("2d");
+  wrapCanvasContext(ctx);
+  setLanguage(localStorage.getItem(LANG_KEY) || "zh");
 
   let currentView = "home";
   let currentSim = null;
@@ -52,9 +65,17 @@
     } catch (_) {}
   }
 
+  function t(text) {
+    return tr(text);
+  }
+
+  function meta(sim) {
+    return simText(sim);
+  }
+
   function showToast(message, duration = 1450) {
     const toast = $("toast");
-    toast.textContent = message;
+    toast.textContent = t(message);
     toast.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove("show"), duration);
@@ -107,7 +128,7 @@
       if (window.NativeBridge) {
         NativeBridge.share(title);
       } else if (navigator.share) {
-        navigator.share({ title: "格物实验", text: title }).catch(() => {});
+        navigator.share({ title: t("格物实验"), text: title }).catch(() => {});
       } else {
         showToast("当前环境不支持系统分享");
       }
@@ -126,21 +147,23 @@
   function matchSim(sim, keyword) {
     const k = keyword.trim().toLowerCase();
     if (!k) return true;
-    return sim.title.includes(keyword.trim()) ||
-      sim.category.includes(keyword.trim()) ||
-      sim.sub.toLowerCase().includes(k);
+    const m = meta(sim);
+    return [sim.title, sim.category, sim.sub, m.title, m.category, m.sub]
+      .some(text => String(text).toLowerCase().includes(k));
   }
 
   function railCard(sim) {
+    const m = meta(sim);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "rail-card";
-    button.innerHTML = `<span>${sim.emoji}</span><span>${sim.title}</span>`;
+    button.innerHTML = `<span>${sim.emoji}</span><span>${m.title}</span>`;
     button.addEventListener("click", () => openSim(sim.id));
     return button;
   }
 
   function simCard(sim, favorites) {
+    const m = meta(sim);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "sim-card";
@@ -148,8 +171,8 @@
     button.innerHTML = `
       <span class="sim-icon" style="background:${hexAlpha(sim.color, .14)}">${sim.emoji}</span>
       <span class="sim-copy">
-        <strong>${sim.title}${favorites.includes(sim.id) ? '<span class="fav-badge">⭐</span>' : ""}</strong>
-        <small>${sim.sub}</small>
+        <strong>${m.title}${favorites.includes(sim.id) ? '<span class="fav-badge">⭐</span>' : ""}</strong>
+        <small>${m.sub}</small>
       </span>
       <span class="sim-arrow">›</span>`;
 
@@ -188,7 +211,7 @@
 
     $("search-clear").style.display = keyword ? "block" : "none";
     $("progress-count").textContent = `${visited.length} / ${SIMS.length}`;
-    $("progress-label").textContent = pct >= 100 ? "🏆 全部探索完成！" : "🧭 探索进度";
+    $("progress-label").textContent = pct >= 100 ? `🏆 ${t("全部探索完成！")}` : `🧭 ${t("探索进度")}`;
     $("progress-fill").style.width = `${pct}%`;
     $("progress-fill").classList.toggle("complete", pct >= 100);
 
@@ -214,15 +237,15 @@
       section.id = `category-${index}`;
       const title = document.createElement("h2");
       title.className = "group-title";
-      title.textContent = `${category} · ${sims.length}`;
+      title.textContent = `${t(category)} · ${sims.length}`;
       section.append(title, ...sims.map(sim => simCard(sim, favorites)));
       groups.append(section);
     });
     $("empty-state").classList.toggle("hidden", matchCount !== 0);
     $("empty-state").querySelector("strong").textContent =
-      keyword ? `没有找到「${keyword}」相关的仿真` : "没有可用的仿真";
+      keyword ? `${t("没有找到「")}${keyword}${t("」相关的仿真")}` : t("没有可用的仿真");
     $("home-tip").classList.toggle("hidden", matchCount === 0);
-    $("home-tip").textContent = `长按卡片可收藏 · 共 ${SIMS.length} 个仿真`;
+    $("home-tip").textContent = `${t("长按卡片可收藏")} · ${t("共")} ${SIMS.length} ${t("个仿真")}`;
   }
 
   function buildCategoryChips() {
@@ -231,7 +254,7 @@
       button.type = "button";
       button.className = "category-chip";
       const count = SIMS.filter(sim => sim.category === category).length;
-      button.innerHTML = `${category}<span>${count}</span>`;
+      button.innerHTML = `${t(category)}<span>${count}</span>`;
       button.addEventListener("click", () => {
         if ($("search-input").value) {
           $("search-input").value = "";
@@ -292,6 +315,7 @@
     switchView("about");
     $("haptic-switch").checked = localStorage.getItem("gw_haptic") !== "0";
     $("dark-switch").checked = localStorage.getItem("gw_dark") === "1";
+    renderStaticText();
   }
 
   function openSim(id) {
@@ -306,15 +330,17 @@
     lastBuzz = state.buzz | 0;
     paramValues = Object.fromEntries(sim.params.map(param => [param.key, param.value]));
     resetReadoutDock();
-    $("sim-title").textContent = sim.title;
-    $("sim-subtitle").textContent = sim.sub;
+    const m = meta(sim);
+    $("sim-title").textContent = m.title;
+    $("sim-subtitle").textContent = m.sub;
     applyStageHeight(sim);
     renderSteppers();
     renderActions();
     renderControls();
     const hasDirectInteraction = Boolean(sim.onTap || sim.onDragStart);
-    $("canvas-hint").textContent = sim.hint ||
-      (sim.onDragStart ? "直接拖动画面中的物体" : "点按画布进行交互");
+    $("canvas-hint").textContent = sim.hint ?
+      t(sim.hint) :
+      (sim.onDragStart ? t("直接拖动画面中的物体") : t("点按画布进行交互"));
     $("canvas-hint").classList.toggle("hidden", !hasDirectInteraction);
     clearTimeout(canvasHintTimer);
     if (hasDirectInteraction) {
@@ -350,7 +376,7 @@
       const input = $(`control-${param.key}`);
       const output = $(`value-${param.key}`);
       if (input) input.value = value;
-      if (output) output.textContent = param.fmt(value);
+      if (output) output.textContent = t(param.fmt(value));
     });
   }
 
@@ -360,18 +386,19 @@
       const wrapper = document.createElement("div");
       wrapper.className = "control";
       const valueId = `value-${param.key}`;
+      const currentValue = paramValues[param.key] ?? param.value;
       wrapper.innerHTML = `
         <div class="control-copy">
-          <label for="control-${param.key}">${param.label}</label>
-          <output id="${valueId}">${param.fmt(param.value)}</output>
+          <label for="control-${param.key}">${t(param.label)}</label>
+          <output id="${valueId}">${t(param.fmt(currentValue))}</output>
         </div>
         <input id="control-${param.key}" type="range"
-          min="${param.min}" max="${param.max}" step="${param.step}" value="${param.value}">`;
+          min="${param.min}" max="${param.max}" step="${param.step}" value="${currentValue}">`;
       const input = wrapper.querySelector("input");
       input.addEventListener("input", () => {
         const value = Number(input.value);
         paramValues[param.key] = value;
-        $(valueId).textContent = param.fmt(value);
+        $(valueId).textContent = t(param.fmt(value));
         if (currentSim.static) renderFrame(0);
       });
       return wrapper;
@@ -379,7 +406,8 @@
   }
 
   function actionLabel(action) {
-    return typeof action.label === "function" ? action.label(state) : action.label;
+    const label = typeof action.label === "function" ? action.label(state) : action.label;
+    return t(label);
   }
 
   function renderActions() {
@@ -406,7 +434,7 @@
       const row = document.createElement("div");
       row.className = "stepper-row";
       row.innerHTML = `
-        <span class="stepper-label">${stepper.label}</span>
+        <span class="stepper-label">${t(stepper.label)}</span>
         <button type="button" class="stepper-button minus" style="color:${stepper.color}">−</button>
         <span class="stepper-value" style="color:${stepper.color}">${stepper.get(state)}</span>
         <button type="button" class="stepper-button plus" style="color:${stepper.color}">+</button>`;
@@ -553,14 +581,78 @@
     localStorage.setItem("gw_dark", dark ? "1" : "0");
   }
 
-  function bindUi() {
-    $("brand-subtitle").textContent = `Gewu Lab · ${SIMS.length} 个互动仿真`;
-    $("about-version").textContent = `版本 3.8.1 · ${SIMS.length} 个互动实验`;
+  function renderLanguageButtons() {
+    document.querySelectorAll("[data-lang-option]").forEach(button => {
+      const active = button.dataset.langOption === getLanguage();
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+  }
+
+  function renderStaticText() {
+    document.documentElement.lang = getLanguage() === "en" ? "en" : "zh-CN";
+    document.title = t("格物实验");
+    document.querySelector(".brand h1").textContent = t("格物实验");
+    $("brand-subtitle").textContent = `Gewu Lab · ${SIMS.length} ${t("个互动仿真")}`;
+    $("random-button").setAttribute("aria-label", t("随机探索"));
+    $("about-button").setAttribute("aria-label", t("关于与设置"));
+    $("category-chips").setAttribute("aria-label", t("实验分类"));
+    $("search-input").placeholder = t("搜索：单摆 / 电路 / 光学 / 能量…");
+    $("search-clear").setAttribute("aria-label", t("清除搜索"));
+    $("favorite-section").querySelector("h2").textContent = `⭐ ${t("我的收藏")}`;
+    $("recent-section").querySelector("h2").textContent = `🕐 ${t("最近使用")}`;
+    $("empty-state").querySelector("button").textContent = t("清除搜索");
+    $("sim-back").setAttribute("aria-label", t("返回"));
+    $("sim-share").textContent = t("分享");
+    $("sim-share").setAttribute("aria-label", t("分享"));
+    $("about-back").setAttribute("aria-label", t("返回"));
+    $("about-title").textContent = t("关于与设置");
+    $("about-subtitle").textContent = t("离线互动科学实验室");
+    $("about-share").textContent = t("分享");
+    $("about-hero-title").textContent = t("格物实验");
+    $("about-version").textContent = `${t("版本")} ${VERSION} · ${SIMS.length} ${t("个互动实验")}`;
+    $("haptic-title").textContent = t("触感反馈");
+    $("haptic-subtitle").textContent = t("命中、碰撞和按钮操作时轻微震动");
+    $("dark-title").textContent = t("深色模式");
+    $("dark-subtitle").textContent = t("降低暗光环境下的屏幕亮度");
+    $("language-title").textContent = t("语言");
+    $("language-subtitle").textContent = t("选择界面和实验文字语言");
+    $("lang-zh").textContent = t("中文");
+    $("lang-en").textContent = "English";
+    $("about-copy-1").textContent = t("格物实验是一款原生封装、完全离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。");
+    $("about-copy-2").textContent = t("拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。");
+    $("phet-link").textContent = t("访问 PhET 官网 ↗");
+    renderAboutStats();
+    renderLanguageButtons();
+  }
+
+  function renderAboutStats() {
     $("category-stats").replaceChildren(...CATEGORIES.map(category => {
       const span = document.createElement("span");
-      span.textContent = `${category} ${SIMS.filter(sim => sim.category === category).length}`;
+      span.textContent = `${t(category)} ${SIMS.filter(sim => sim.category === category).length}`;
       return span;
     }));
+  }
+
+  function applyLanguage(lang) {
+    setLanguage(lang);
+    localStorage.setItem(LANG_KEY, getLanguage());
+    renderStaticText();
+    buildCategoryChips();
+    refreshHome();
+    if (currentSim) {
+      const m = meta(currentSim);
+      $("sim-title").textContent = m.title;
+      $("sim-subtitle").textContent = m.sub;
+      renderSteppers();
+      renderActions();
+      renderControls();
+      renderFrame(0);
+    }
+  }
+
+  function bindUi() {
+    renderStaticText();
 
     $("search-input").addEventListener("input", refreshHome);
     $("search-clear").addEventListener("click", () => {
@@ -582,20 +674,23 @@
     $("sim-back").addEventListener("click", showHome);
     $("about-back").addEventListener("click", showHome);
     $("sim-share").addEventListener("click", () => {
-      if (currentSim) share(`格物实验 · ${currentSim.title} — 一起动手做实验`);
+      if (currentSim) share(`${t("格物实验")} · ${meta(currentSim).title} — ${t("一起动手做实验")}`);
     });
     $("about-share").addEventListener("click", () => {
-      share(`格物实验 — ${SIMS.length} 个互动仿真实验室`);
+      share(`${t("格物实验")} — ${SIMS.length} ${t("个互动仿真实验室")}`);
     });
     $("haptic-switch").addEventListener("change", event => {
       localStorage.setItem("gw_haptic", event.target.checked ? "1" : "0");
       if (event.target.checked) haptic(true);
     });
     $("dark-switch").addEventListener("change", event => applyTheme(event.target.checked));
+    $("lang-zh").addEventListener("click", () => applyLanguage("zh"));
+    $("lang-en").addEventListener("click", () => applyLanguage("en"));
     $("phet-link").addEventListener("click", () => {
       try {
-        if (window.NativeBridge) NativeBridge.openUrl("https://phet.colorado.edu/zh_CN/");
-        else window.open("https://phet.colorado.edu/zh_CN/", "_blank");
+        const url = getLanguage() === "en" ? "https://phet.colorado.edu/" : "https://phet.colorado.edu/zh_CN/";
+        if (window.NativeBridge) NativeBridge.openUrl(url);
+        else window.open(url, "_blank");
       } catch (_) {}
     });
     setupCanvasInteraction();

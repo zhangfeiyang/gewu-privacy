@@ -452,6 +452,28 @@ button { cursor: pointer; }
 .setting-card strong, .setting-card span { display: block; }
 .setting-card strong { font-size: 14px; }
 .setting-card div span { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.language-toggle {
+  flex: 0 0 auto !important;
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+}
+.language-toggle button {
+  min-width: 58px;
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 800;
+}
+.language-toggle button.active {
+  color: white;
+  background: linear-gradient(135deg, var(--blue), #0c78a6);
+}
 .switch input { display: none; }
 .switch > span { width: 48px; height: 28px; padding: 3px; border-radius: 999px; background: #c8d2d8; transition: background .2s; }
 .switch > span::after { content: ""; display: block; width: 22px; height: 22px; border-radius: 50%; background: white; box-shadow: 0 2px 6px rgba(0,0,0,.24); transition: transform .2s; }

@@ -96,12 +96,12 @@ class MainActivity : ComponentActivity() {
         fun share(title: String) {
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_SUBJECT, "格物实验")
+                putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
                 putExtra(Intent.EXTRA_TEXT, title)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(
-                Intent.createChooser(intent, "分享格物实验")
+                Intent.createChooser(intent, context.getString(R.string.share_app))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             )
         }

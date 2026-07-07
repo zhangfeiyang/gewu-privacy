@@ -30,6 +30,37 @@ def main() -> None:
         assert "100 个互动仿真" in page.locator("#brand-subtitle").inner_text()
         assert page.locator(".sim-card").count() == 100
         assert page.locator(".category-chip").count() == 7
+
+        page.locator("#about-button").click()
+        page.locator("#lang-en").click()
+        assert page.locator("#about-title").inner_text() == "About & Settings"
+        assert page.locator("#lang-en").evaluate(
+            "element => element.classList.contains('active')"
+        )
+        page.locator("#about-back").click()
+        assert "100 interactive simulations" in page.locator(
+            "#brand-subtitle"
+        ).inner_text()
+        assert "Mechanics" in page.locator(".category-chip").first.inner_text()
+        page.locator("#search-input").fill("neural")
+        assert page.locator(".sim-card").count() == 2
+        assert page.locator('.sim-card[data-id="mlp"] strong').inner_text().startswith(
+            "Fully Connected Neural Network"
+        )
+        page.locator("#search-clear").click()
+        page.locator('.sim-card[data-id="electrolysis"]').click()
+        page.wait_for_function(
+            "() => document.getElementById('stage-readout').textContent"
+            ".includes('H₂ (cathode)')"
+        )
+        assert "O₂ (anode)" in page.locator("#stage-readout").inner_text()
+        page.locator("#sim-back").click()
+        page.locator("#about-button").click()
+        page.locator("#lang-zh").click()
+        assert page.locator("#about-title").inner_text() == "关于与设置"
+        page.locator("#about-back").click()
+        assert "100 个互动仿真" in page.locator("#brand-subtitle").inner_text()
+
         placement_coverage = page.evaluate(
             """() => {
               const { SIMS, READOUT_PLACEMENTS } = window.module.exports;
