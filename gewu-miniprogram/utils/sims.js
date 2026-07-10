@@ -49,9 +49,9 @@ const GW_EN = {
   '英文': 'English',
   '访问 PhET 官网 ↗': 'Visit PhET website ↗',
   '格物实验是一款原生封装、完全离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。': 'Gewu Lab is a native-packaged, fully offline interactive simulation lab covering mechanics, waves and optics, electromagnetism, thermodynamics, atomic physics, chemistry, and AI.',
-  '拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。': 'Change conditions with sliders and direct manipulation, then observe phenomena and data in real time. Long-press home cards to favorite them. The teaching approach is inspired by PhET.',
+  '直接拖动、按压、连接、投料和手写，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。': 'Drag, press, connect, mix, and draw directly, then observe phenomena and data in real time. Long-press home cards to favorite them. The teaching approach is inspired by PhET.',
   '格物实验是一款原生、离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。取“格物致知”之意，教学理念受 PhET (phet.colorado.edu) 启发。': 'Gewu Lab is a native, offline interactive simulation lab covering mechanics, waves and optics, electromagnetism, thermodynamics, atomic physics, chemistry, and AI. Its teaching approach is inspired by PhET (phet.colorado.edu).',
-  '拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏；点右上角「···」可把实验分享给朋友。': 'Change conditions with sliders and direct manipulation, observe phenomena and data in real time, long-press home cards to favorite them, and use the top-right menu to share.',
+  '直接拖动、按压、连接、投料和手写，实时观察现象与数据；长按首页卡片可收藏；点右上角「···」可把实验分享给朋友。': 'Drag, press, connect, mix, and draw directly, observe phenomena and data in real time, long-press home cards to favorite them, and use the top-right menu to share.',
   '当前环境不支持系统分享': 'System sharing is not available here',
   '无法打开系统分享': 'Could not open system sharing',
   '未找到仿真': 'Simulation not found',
@@ -259,8 +259,10 @@ const GW_EN = {
   'H₂:O₂ = 2:1': 'H₂:O₂ = 2:1',
   '全连接神经网络': 'Fully Connected Neural Network',
   '真实反向传播训练 / 决策边界': 'Real backpropagation training / decision boundary',
+  '直接搭建网络 / 真实反向传播': 'Build a network directly / real backpropagation',
   '卷积神经网络': 'Convolutional Neural Network',
   '卷积核滑动 / 特征图 / 池化': 'Sliding kernels / feature maps / pooling',
+  '手写数字 / 卷积 / 特征图 / 池化': 'Handwritten digits / convolution / feature maps / pooling',
   'Transformer 注意力': 'Transformer Attention',
   '自注意力 / 因果遮罩 / 逐词生成': 'Self-attention / causal mask / token generation',
   '梯度下降': 'Gradient Descent',
@@ -333,6 +335,8 @@ const GW_EN = {
   '初速度': 'Initial speed',
   '发射角度': 'Launch angle',
   '发射高度': 'Launch height',
+  '拖炮口瞄准并调速，松手发射 · 拖基座调高度 · 拖靶子': 'Drag the muzzle to aim and set speed, then release to launch · drag the base for height · drag the target',
+  '预测轨迹': 'Predicted path',
   '初始角度': 'Initial angle',
   '初始位移': 'Initial displacement',
   '释放高度': 'Release height',
@@ -391,6 +395,7 @@ const GW_EN = {
   '左倾': 'Tilting left',
   '右倾': 'Tilting right',
   'pH 值': 'pH value',
+  '在底部色阶拖动游标调节 pH': 'Drag the marker on the bottom scale to adjust pH',
   '性质': 'Property',
   '酸性': 'Acidic',
   '碱性': 'Basic',
@@ -399,6 +404,11 @@ const GW_EN = {
   '溶液体积': 'Solution volume',
   '溶质': 'Solute',
   '浓度': 'Concentration',
+  '拖液面把手调体积 · 把溶质勺拖入量筒': 'Drag the liquid handle for volume · drag the solute spoon into the cylinder',
+  '溶质勺': 'Solute spoon',
+  '拖动液面': 'Drag liquid level',
+  '已加入 10 g 溶质': 'Added 10 g solute',
+  '把溶质勺拖入量筒': 'Drag the solute spoon into the cylinder',
   '中心质量': 'Central mass',
   '极板面积': 'Plate area',
   '极板间距': 'Plate spacing',
@@ -532,9 +542,14 @@ const GW_EN = {
   '输出电压': 'Output voltage',
   '学习率': 'Learning rate',
   '训练轮次': 'Epochs',
+  '训练': 'Training',
   '损失': 'Loss',
   '准确率': 'Accuracy',
   '推理': 'Inference',
+  '网络拓扑': 'Network topology',
+  '识别结果': 'Recognition',
+  '置信度': 'Confidence',
+  '识别方式': 'Recognition method',
   '滑动速度': 'Sliding speed',
   '卷积核': 'Kernel',
   '当前输出值': 'Current output',
@@ -628,6 +643,9 @@ const GW_EN = {
   '示例回路': 'Example circuit',
   '删除选中': 'Delete selected',
   '清空导线': 'Clear wires',
+  '拖动组件或导线到垃圾区删除 · 接线柱间连线': 'Drag components or wires to the trash · connect terminals',
+  '从金色接线柱连线 · 组件/导线可拖入垃圾区': 'Wire from gold terminals · drag components/wires to the trash',
+  '导线已选中·再点删除': 'Wire selected · tap again to delete',
 
   // Action labels and status phrases
   '▶ 释放': '▶ Release',
@@ -764,6 +782,17 @@ const GW_EN = {
   '数据:XOR': 'Data: XOR',
   '数据:圆环': 'Data: rings',
   '重置网络': 'Reset network',
+  '隐藏层1': 'Hidden layer 1',
+  '隐藏层2': 'Hidden layer 2',
+  '神经元': 'Neuron',
+  '拖到 H1/H2 增加': 'Drag to H1/H2 to add',
+  '拖节点到这里删除': 'Drag a node here to remove it',
+  '删除': 'Remove',
+  '按住这里训练': 'Hold here to train',
+  '正在训练，松手暂停': 'Training — release to pause',
+  '轻点 ± 搭建网络 · 按住训练区开始反向传播': 'Tap ± to build the network · hold the training pad to backpropagate',
+  '拖动神经元到 H1/H2 · 拖节点到删除区 · 按住训练': 'Drag a neuron to H1/H2 · drag a node to Remove · hold to train',
+  '拖动热图试推理': 'Drag on the heat map to infer',
   '损失曲线': 'Loss curve',
   '输出 ': 'Output ',
   ' → 类别 ': ' → class ',
@@ -776,16 +805,29 @@ const GW_EN = {
   '↻ 重新卷积': '↻ Run convolution again',
   '▶ 开始卷积': '▶ Start convolution',
   '图像:': 'Image: ',
+  '示例数字:': 'Example digit: ',
+  '清空输入': 'Clear input',
   '数字7': 'digit 7',
   '十字': 'cross',
   '方框': 'box',
   '核:': 'Kernel: ',
   '输入 12×12': 'Input 12×12',
+  '输入 12×12（每格=0/1）': 'Input 12×12 (each cell = 0/1)',
+  '手写区：拖动涂画': 'Handwriting area: drag to draw',
+  '写入': 'Draw',
+  '擦除': 'Erase',
+  '在输入网格拖动手写 · 点写入/擦除切换画笔': 'Drag in the input grid to write · tap Draw/Erase to switch tools',
   '卷积核（共享参数仅9个）': 'Kernel (only 9 shared parameters)',
   '特征图 ': 'Feature map ',
   'ReLU→2×2池化': 'ReLU → 2×2 pooling',
   '（卷积完成后显示）': '(shown after convolution)',
   '卷积9 vs 全连接14400': 'Convolution 9 vs fully connected 14400',
+  '请手写数字': 'Write a digit',
+  '卷积/池化 + Dense softmax': 'Convolution/pooling + Dense softmax',
+  '应用内置合成字形（非 MNIST）': 'Built-in synthetic glyphs (not MNIST)',
+  '合成字形（非 MNIST）': 'Synthetic glyphs (not MNIST)',
+  '训练集': 'Training set',
+  '预测 ': 'Prediction ',
   '小猫': 'kitten',
   '追': 'chases',
   '皮球': 'ball',
@@ -838,6 +880,10 @@ const GW_EN = {
   '加色混合（光越加越亮）': 'Additive mixing (more light gets brighter)',
   '手机屏幕 / 舞台灯光': 'Phone screens / stage lighting',
   '▶ 通电': '▶ Power on',
+  '点按电源开关通断电': 'Tap the power switch to turn the current on or off',
+  '电源开关': 'Power switch',
+  '已接通': 'ON',
+  '已断开': 'OFF',
   '− 阴极': '− Cathode',
   '+ 阳极': '+ Anode',
   '2H₂O →通电→ 2H₂↑+O₂↑': '2H₂O → electricity → 2H₂↑ + O₂↑',
@@ -1007,6 +1053,18 @@ const GW_EN = {
   '石蕊遇碱变蓝': 'litmus turns blue in base',
   '碱性 pH>7': 'basic pH>7',
   '缓慢冒泡，溶液浅绿': 'slow bubbling; solution turns pale green',
+  '拖动或点按试剂瓶加入烧杯': 'Drag or tap a reagent bottle to add it to the beaker',
+  '清空烧杯': 'Clear beaker',
+  '烧杯': 'Beaker',
+  '试剂架': 'Reagent rack',
+  '从试剂架拖入两种试剂': 'Drag two reagents from the rack',
+  '再加入一种试剂，自动反应': 'Add one more reagent to react automatically',
+  '已加入': 'Added',
+  '自动反应开始': 'Reaction started automatically',
+  '该试剂已加入，请选择另一种': 'Already added; choose a different reagent',
+  '烧杯已满，请先清空': 'The beaker is full; clear it first',
+  '请拖到烧杯中': 'Drag it into the beaker',
+  '烧杯已清空': 'Beaker cleared',
 
   // Element display names
   '氢 H': 'Hydrogen H',
@@ -1350,6 +1408,12 @@ function lerpHex(a, b, t) {
 }
 
 // ================= 力学 =================
+function projectileLaunch(s, p) {
+  const r = p.angle * Math.PI / 180;
+  s.shots.push({ x: 0, y: p.height, vx: p.speed * Math.cos(r), vy: p.speed * Math.sin(r),
+    g: p.gravity, path: [[0, p.height]], landed: false, maxH: p.height, t: 0, range: 0 });
+  if (s.shots.length > 6) s.shots.shift();
+}
 const projectile = {
   id: 'projectile', title: '抛体运动', sub: '角度 / 初速 / 打靶计分', category: '力学', color: '#E53935', emoji: '🚀',
   params: [
@@ -1359,15 +1423,13 @@ const projectile = {
     { key: 'height', label: '发射高度', min: 0, max: 12, step: 0.5, value: 0, fmt: v => v.toFixed(1) + ' m' }
   ],
   actions: [
-    { label: '🚀 发射', primary: true, on(s, p) {
-        const r = p.angle * Math.PI / 180;
-        s.shots.push({ x: 0, y: p.height, vx: p.speed * Math.cos(r), vy: p.speed * Math.sin(r), g: p.gravity, path: [[0, p.height]], landed: false, maxH: p.height, t: 0, range: 0 });
-        if (s.shots.length > 6) s.shots.shift();
-      } },
-    { label: '清除', on(s) { s.shots = []; s.wx = 28; s.wy = 18; } },
+    { label: '清除', on(s) { s.shots = []; s.wx = 28; s.wy = 18; s.aiming = false; } },
     { label: '换靶', on(s) { s.targetX = 8 + Math.random() * 20; } }
   ],
-  init() { return { shots: [], wx: 28, wy: 18, targetX: 16, score: 0, attempts: 0, buzz: 0 }; },
+  init() {
+    return { shots: [], wx: 28, wy: 18, targetX: 16, score: 0, attempts: 0,
+      buzz: 0, drag: null, aiming: false, aimMoved: false, _ui: null };
+  },
   step(s, p, dt) {
     if (dt <= 0) return;
     const sub = 8, h = dt / sub;
@@ -1388,13 +1450,14 @@ const projectile = {
       if (o.maxH + 3 > s.wy) s.wy = o.maxH + 3;
     });
   },
-  hint: '拖动炮管调角度 · 拖动靶子换位置',
+  hint: '拖炮口瞄准并调速，松手发射 · 拖基座调高度 · 拖靶子',
   onDragStart(s, p, x, y) {
     const u = s._ui;
     if (!u) return false;
     if (Math.hypot(x - u.targetX, y - u.targetY) < u.targetR + 24) s.drag = 'target';
-    else if (Math.hypot(x - u.muzzleX, y - u.muzzleY) < 46 ||
-             Math.hypot(x - u.baseX, y - u.baseY) < 34) s.drag = 'cannon';
+    else if (Math.hypot(x - u.muzzleX, y - u.muzzleY) < u.muzzleR + 24) {
+      s.drag = 'aim'; s.aiming = true; s.aimMoved = false;
+    } else if (Math.hypot(x - u.baseX, y - u.baseY) < u.baseR + 18) s.drag = 'height';
     else return false;
     return true;
   },
@@ -1403,12 +1466,24 @@ const projectile = {
     if (!u) return;
     if (s.drag === 'target') {
       s.targetX = Math.max(3, Math.min(s.wx - 2, (x - u.originX) / u.scale));
-    } else if (s.drag === 'cannon') {
+    } else if (s.drag === 'aim') {
       const deg = Math.atan2(u.baseY - y, x - u.baseX) * 180 / Math.PI;
       p.angle = Math.max(5, Math.min(85, Math.round(deg)));
+      const distance = Math.hypot(x - u.baseX, y - u.baseY);
+      const f = Math.max(0, Math.min(1, (distance - u.minBarrel) / (u.maxBarrel - u.minBarrel)));
+      p.speed = Math.max(2, Math.min(40, Math.round(2 + f * 38)));
+      s.aimMoved = true;
+    } else if (s.drag === 'height') {
+      const height = Math.max(0, Math.min(12, (u.groundY - y) / u.scale));
+      p.height = Math.round(height * 2) / 2;
     }
   },
-  onDragEnd(s) { s.drag = null; },
+  onDragEnd(s, p) {
+    const drag = s.drag;
+    s.drag = null;
+    if (drag === 'aim' && s.aimMoved) projectileLaunch(s, p);
+    s.aiming = false; s.aimMoved = false;
+  },
   draw(ctx, W, H, s, p) {
     const groundY = H * 0.8, originX = W * 0.08, topPad = H * 0.07;
     const scale = Math.min((W - originX - W * 0.04) / s.wx, (groundY - topPad) / s.wy);
@@ -1434,7 +1509,23 @@ const projectile = {
       ctx.fillStyle = projectile.color; ctx.beginPath(); ctx.arc(sx(lp[0]), sy(lp[1]), last && !o.landed ? 7 : 5, 0, 7); ctx.fill();
       ctx.globalAlpha = 1;
     });
-    const bx = sx(0), by = sy(p.height), len = Math.max(50, 3 * scale), a = p.angle * Math.PI / 180;
+    const bx = sx(0), by = sy(p.height), a = p.angle * Math.PI / 180;
+    const minBarrel = 44, maxBarrel = Math.max(72, Math.min(94, W * 0.28));
+    const len = minBarrel + (p.speed - 2) / 38 * (maxBarrel - minBarrel);
+    if (s.aiming) {
+      const vx = p.speed * Math.cos(a), vy = p.speed * Math.sin(a);
+      const flight = (vy + Math.sqrt(vy * vy + 2 * p.gravity * p.height)) / Math.max(p.gravity, 0.1);
+      const previewT = Math.min(flight, 2.2);
+      ctx.strokeStyle = 'rgba(229,57,53,0.58)'; ctx.lineWidth = 2; ctx.setLineDash([4, 6]);
+      ctx.beginPath(); let started = false;
+      for (let i = 0; i <= 18; i++) {
+        const t = previewT * i / 18, px = vx * t, py = p.height + vy * t - 0.5 * p.gravity * t * t;
+        if (py < 0) break;
+        if (started) ctx.lineTo(sx(px), sy(py)); else { ctx.moveTo(sx(px), sy(py)); started = true; }
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = '#C62828'; ctx.font = '10px sans-serif'; ctx.fillText('预测轨迹', bx + 12, Math.max(14, by - 18));
+    }
     if (p.height > 0.05) {
       const half = Math.min(18, Math.max(10, scale * 0.65));
       const topY = by + 10;
@@ -1452,11 +1543,19 @@ const projectile = {
     }
     ctx.save(); ctx.translate(bx, by); ctx.rotate(-a); ctx.fillStyle = '#455A64'; ctx.fillRect(0, -7, len, 14); ctx.restore();
     ctx.fillStyle = '#37474F'; ctx.beginPath(); ctx.arc(bx, by, 12, 0, 7); ctx.fill();
+    const muzzleX = bx + Math.cos(a) * len, muzzleY = by - Math.sin(a) * len;
+    ctx.fillStyle = s.aiming ? '#FF7043' : '#FFB300'; ctx.beginPath(); ctx.arc(muzzleX, muzzleY, 10, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#FFF8E1'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#00ACC1'; roundRect(ctx, bx - 25, by - 15, 13, 30, 6); ctx.fill();
+    ctx.strokeStyle = '#E0F7FA'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(bx - 22, by - 5); ctx.lineTo(bx - 15, by - 5); ctx.moveTo(bx - 22, by + 5); ctx.lineTo(bx - 15, by + 5); ctx.stroke();
     s._ui = {
       baseX: bx, baseY: by,
-      muzzleX: bx + Math.cos(a) * len, muzzleY: by - Math.sin(a) * len,
+      baseR: 18, muzzleX, muzzleY, muzzleR: 10,
       targetX: txp, targetY: tcy, targetR: Math.max(tr, 16),
-      originX, scale
+      originX, scale, groundY, minBarrel, maxBarrel,
+      base: { x: bx, y: by, r: 18 }, muzzle: { x: muzzleX, y: muzzleY, r: 10 },
+      target: { x: txp, y: tcy, r: Math.max(tr, 16) }
     };
     const ls = s.shots[s.shots.length - 1];
     readout(ctx, [
@@ -1476,10 +1575,7 @@ const pendulum = {
     { key: 'damping', label: '阻尼', min: 0, max: 1.5, step: 0.05, value: 0.1, fmt: v => v.toFixed(2) },
     { key: 'gravity', label: '重力', min: 1, max: 25, step: 0.1, value: 9.81, fmt: v => v.toFixed(2) }
   ],
-  actions: [
-    { label: s => s.running ? '⏸ 暂停' : '▶ 释放', primary: true, on(s) { s.running = !s.running; } },
-    { label: '重置', on(s, p) { s.running = false; s.theta = p.amp * Math.PI / 180; s.omega = 0; } }
-  ],
+  actions: [{ label: '重置', on(s, p) { s.running = false; s.dragging = false; s.theta = p.amp * Math.PI / 180; s.omega = 0; } }],
   init() { return { theta: 35 * Math.PI / 180, omega: 0, running: false }; },
   step(s, p, dt) {
     if (!s.running) {
@@ -1526,10 +1622,7 @@ const springs = {
     { key: 'u0', label: '初始位移', min: -1.5, max: 1.5, step: 0.1, value: 0.8, fmt: v => (v >= 0 ? '+' : '') + v.toFixed(1) + ' m' },
     { key: 'gravity', label: '重力', min: 1, max: 25, step: 0.1, value: 9.81, fmt: v => v.toFixed(2) }
   ],
-  actions: [
-    { label: s => s.running ? '⏸ 暂停' : '▶ 释放', primary: true, on(s) { s.running = !s.running; } },
-    { label: '重置', on(s, p) { s.running = false; s.u = p.u0; s.v = 0; } }
-  ],
+  actions: [{ label: '重置', on(s, p) { s.running = false; s.dragging = false; s.u = p.u0; s.v = 0; } }],
   init() { return { u: 0.8, v: 0, running: false }; },
   step(s, p, dt) {
     if (!s.running) {
@@ -2415,17 +2508,32 @@ const lever = {
   }
 };
 
+function phSetFromX(p, ui, x) {
+  const raw = Math.max(0, Math.min(14, (x - ui.x) / ui.w * 14));
+  p.pH = Math.round(raw * 10) / 10;
+}
 const ph = {
   id: 'ph', title: '酸碱 pH', sub: 'pH / 氢离子浓度', category: '化学', color: '#43A047', emoji: '🧪',
   params: [{ key: 'pH', label: 'pH 值', min: 0, max: 14, step: 0.1, value: 7, fmt: v => v.toFixed(1) }],
   actions: [],
-  init() { return { bubbles: [] }; },
+  init() { return { bubbles: [], dragging: false, _ui: null }; },
   step(s, p, dt) {
     if (dt <= 0) return;
     if (s.bubbles.length < 14 && Math.random() < dt * 5) s.bubbles.push({ x: 0.1 + Math.random() * 0.8, y: 1, r: 2 + Math.random() * 3, sp: 0.15 + Math.random() * 0.2 });
     s.bubbles.forEach(b => { b.y -= b.sp * dt; b.x += Math.sin(b.y * 20) * dt * 0.05; });
     s.bubbles = s.bubbles.filter(b => b.y > 0.03);
   },
+  hint: '在底部色阶拖动游标调节 pH',
+  onDragStart(s, p, x, y) {
+    const scale = s._ui && s._ui.scale;
+    if (!scale || x < scale.x - 18 || x > scale.x + scale.w + 18 ||
+        y < scale.y - 18 || y > scale.y + scale.h + 18) return false;
+    s.dragging = true; phSetFromX(p, scale, x); return true;
+  },
+  onDragMove(s, p, x) {
+    if (s.dragging && s._ui) phSetFromX(p, s._ui.scale, x);
+  },
+  onDragEnd(s) { s.dragging = false; },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#FAFAFA'; ctx.fillRect(0, 0, W, H);
     const v = p.pH, col = v < 3 ? '#E53935' : v < 6 ? '#FB8C00' : v < 7 ? '#FDD835' : v < 8 ? '#7CB342' : v < 11 ? '#00897B' : '#5E35B1';
@@ -2445,12 +2553,27 @@ const ph = {
     for (let x = 0; x < scW; x++) { const f = x / scW * 14, c = f < 3 ? 0 : f < 6 ? 1 : f < 7 ? 2 : f < 8 ? 3 : f < 11 ? 4 : 5; ctx.fillStyle = colors[c]; ctx.fillRect(scX + x, scY, 1, 16); }
     const mx = scX + v / 14 * scW;
     ctx.fillStyle = '#263238'; ctx.beginPath(); ctx.moveTo(mx, scY - 4); ctx.lineTo(mx - 7, scY - 14); ctx.lineTo(mx + 7, scY - 14); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = s.dragging ? '#1565C0' : '#263238'; ctx.beginPath(); ctx.arc(mx, scY + 8, 11, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(v.toFixed(1), mx, scY + 11); ctx.textAlign = 'start';
     ctx.fillStyle = '#607D8B'; ctx.font = '11px sans-serif';
     ctx.fillText('0 酸', scX, scY + 30); ctx.fillText('7 中', scX + scW / 2 - 10, scY + 30); ctx.fillText('14 碱', scX + scW - 30, scY + 30);
+    s._ui = {
+      scale: { x: scX, y: scY, w: scW, h: 16 },
+      cursor: { x: mx, y: scY + 8, r: 18 },
+      beaker: { x: bx, y: by, w: bw, h: bh }
+    };
     readout(ctx, [['pH', p.pH.toFixed(1)], ['[H⁺]', Math.pow(10, -p.pH).toExponential(1) + ' M'], ['性质', p.pH < 6.9 ? '酸性' : p.pH > 7.1 ? '碱性' : '中性']]);
   }
 };
 
+function concentrationSetVolume(p, ui, y) {
+  const raw = (ui.y + ui.h - y) / ui.h * 100;
+  p.volume = Math.round(Math.max(20, Math.min(100, raw)) / 5) * 5;
+}
+function concentrationPointIn(rect, x, y) {
+  return !!rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
 const concentration = {
   id: 'concentration', title: '溶液浓度', sub: '溶质 / 溶剂 / 浓度', category: '化学', color: '#8E24AA', emoji: '🥤',
   params: [
@@ -2458,9 +2581,12 @@ const concentration = {
     { key: 'volume', label: '溶液体积', min: 20, max: 100, step: 5, value: 60, fmt: v => v.toFixed(0) + ' mL' }
   ],
   actions: [],
-  init() { return { dots: [] }; },
+  init() {
+    return { dots: [], drag: null, spoonGhost: null, feedback: '', feedbackT: 0, buzz: 0, _ui: null };
+  },
   step(s, p, dt) {
     if (dt <= 0) return;
+    if (s.feedbackT > 0) s.feedbackT = Math.max(0, s.feedbackT - dt);
     const target = Math.round(p.solute * 0.7);
     while (s.dots.length < target) s.dots.push({ x: Math.random(), y: Math.random(), a: Math.random() * 6.2832 });
     while (s.dots.length > target) s.dots.pop();
@@ -2472,6 +2598,34 @@ const concentration = {
       if (d.y < 0) { d.y = 0; d.a = -d.a; }
       if (d.y > 1) { d.y = 1; d.a = -d.a; }
     });
+  },
+  hint: '拖液面把手调体积 · 把溶质勺拖入量筒',
+  onDragStart(s, p, x, y) {
+    const u = s._ui;
+    if (!u) return false;
+    if (concentrationPointIn(u.spoon, x, y)) {
+      s.drag = 'spoon'; s.spoonGhost = { x, y, startX: x, startY: y }; return true;
+    }
+    if (Math.hypot(x - u.liquidHandle.x, y - u.liquidHandle.y) < u.liquidHandle.r + 18 ||
+        (x >= u.cylinder.x - 10 && x <= u.cylinder.x + u.cylinder.w + 28 && Math.abs(y - u.liquidHandle.y) < 22)) {
+      s.drag = 'volume'; concentrationSetVolume(p, u.cylinder, y); return true;
+    }
+    return false;
+  },
+  onDragMove(s, p, x, y) {
+    if (s.drag === 'volume' && s._ui) concentrationSetVolume(p, s._ui.cylinder, y);
+    else if (s.drag === 'spoon' && s.spoonGhost) { s.spoonGhost.x = x; s.spoonGhost.y = y; }
+  },
+  onDragEnd(s, p, x, y) {
+    if (s.drag === 'spoon') {
+      if (concentrationPointIn(s._ui && s._ui.cylinder, x, y)) {
+        p.solute = Math.min(100, p.solute + 10); s.feedback = '已加入 10 g 溶质';
+        s.feedbackT = 1.5; s.buzz = (s.buzz | 0) + 1;
+      } else {
+        s.feedback = '把溶质勺拖入量筒'; s.feedbackT = 1.5;
+      }
+    }
+    s.drag = null; s.spoonGhost = null;
   },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#FAFAFA'; ctx.fillRect(0, 0, W, H);
@@ -2486,6 +2640,41 @@ const concentration = {
     // 量筒刻度
     ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = 1; ctx.font = '10px sans-serif'; ctx.fillStyle = '#78909C';
     for (let m = 25; m <= 100; m += 25) { const yy = by + bh - bh * m / 100; ctx.beginPath(); ctx.moveTo(bx, yy); ctx.lineTo(bx + 10, yy); ctx.stroke(); ctx.fillText(m + '', bx - 22, yy + 4); }
+    // 液面拖动把手
+    const handleX = bx + bw + 14;
+    ctx.strokeStyle = '#00ACC1'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(bx + 3, liqY); ctx.lineTo(handleX, liqY); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = s.drag === 'volume' ? '#00838F' : '#00ACC1'; ctx.beginPath(); ctx.arc(handleX, liqY, 12, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('↕', handleX, liqY + 4); ctx.textAlign = 'start';
+    // 可拖入量筒的溶质勺
+    const spoonX = W * 0.84, spoonY = H * 0.22;
+    const drawSpoon = (x, y, alpha2) => {
+      ctx.save(); ctx.globalAlpha = alpha2;
+      ctx.strokeStyle = '#78909C'; ctx.lineWidth = 7; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(x + 6, y - 4); ctx.lineTo(x + 42, y - 28); ctx.stroke();
+      ctx.fillStyle = '#B0BEC5'; ctx.beginPath(); ctx.ellipse(x, y, 18, 12, -0.18, 0, 7); ctx.fill();
+      ctx.fillStyle = '#8E24AA';
+      for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.arc(x + i * 5, y - 2 - Math.abs(i), 2.5, 0, 7); ctx.fill(); }
+      ctx.restore();
+    };
+    drawSpoon(spoonX, spoonY, 1);
+    ctx.fillStyle = '#6A1B9A'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('溶质勺', spoonX + 16, spoonY + 28, 78); ctx.textAlign = 'start';
+    if (s.spoonGhost) drawSpoon(s.spoonGhost.x, s.spoonGhost.y, 0.78);
+    if (s.feedback && s.feedbackT > 0) {
+      ctx.font = 'bold 11px sans-serif';
+      const fw = Math.min(W - 24, Math.max(132, ctx.measureText(tr(s.feedback)).width + 22));
+      ctx.fillStyle = 'rgba(255,255,255,0.94)'; roundRect(ctx, (W - fw) / 2, H * 0.04, fw, 25, 12); ctx.fill();
+      ctx.strokeStyle = '#8E24AA'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = '#6A1B9A'; ctx.textAlign = 'center'; ctx.fillText(s.feedback, W / 2, H * 0.04 + 17, fw - 10); ctx.textAlign = 'start';
+    }
+    s._ui = {
+      cylinder: { x: bx, y: by, w: bw, h: bh },
+      liquidHandle: { x: handleX, y: liqY, r: 12 },
+      spoon: { x: spoonX - 24, y: spoonY - 38, w: 88, h: 78 },
+      spoonCenter: { x: spoonX, y: spoonY },
+      spoonGhost: s.spoonGhost ? { x: s.spoonGhost.x, y: s.spoonGhost.y } : null
+    };
     readout(ctx, [['溶质', p.solute + ' g（' + s.dots.length + ' 粒）'], ['体积', p.volume + ' mL'], ['浓度', (conc * 1000).toFixed(0) + ' g/L']]);
   }
 };
@@ -3757,10 +3946,7 @@ const hydraulic = {
     { key: 'a1', label: '小活塞面积', min: 1, max: 5, step: 0.5, value: 1, fmt: v => v.toFixed(1) },
     { key: 'a2', label: '大活塞面积', min: 5, max: 30, step: 1, value: 15, fmt: v => v.toFixed(0) }
   ],
-  actions: [
-    { label: s => s.running ? '⏸ 暂停' : (s.d >= 1 ? '↻ 复位再压' : '▶ 按压'), primary: true, on(s) { if (s.d >= 1) { s.d = 0; s.running = true; } else s.running = !s.running; } },
-    { label: '复位', on(s) { s.running = false; s.d = 0; } }
-  ],
+  actions: [{ label: '复位', on(s) { s.running = false; s.dragging = false; s.d = 0; } }],
   init() { return { d: 0, running: false, buzz: 0 }; },
   step(s, p, dt) {
     if (!s.running || dt <= 0) return;
@@ -3938,29 +4124,36 @@ const potentiometer = {
 };
 
 // ===== 人工智能：深度学习 =====
+// 可复现随机数让同一拓扑/数据的教学结果稳定，仍由真实梯度下降更新权重。
+function mlpRng(seed) {
+  let x = seed >>> 0;
+  return () => { x = (Math.imul(x, 1664525) + 1013904223) >>> 0; return x / 4294967296; };
+}
 // 一个真实的 2-n1-n2-1 多层感知机：前向传播
 function mlpForward(net, x0, x1) {
   const h1 = [], h2 = [];
   for (let i = 0; i < net.n1; i++) h1.push(Math.tanh(net.W1[i][0] * x0 + net.W1[i][1] * x1 + net.b1[i]));
   for (let j = 0; j < net.n2; j++) { let z = net.b2[j]; for (let i = 0; i < net.n1; i++) z += net.W2[j][i] * h1[i]; h2.push(Math.tanh(z)); }
   let z3 = net.b3; for (let j = 0; j < net.n2; j++) z3 += net.W3[j] * h2[j];
-  return { h1, h2, y: 1 / (1 + Math.exp(-z3)) };
+  return { h1, h2, y: 1 / (1 + Math.exp(-Math.max(-40, Math.min(40, z3)))) };
 }
-function mlpInit(n1, n2) {
-  const r = () => (Math.random() - 0.5) * 1.6;
+function mlpInit(n1, n2, seed) {
+  const rand = mlpRng(seed == null ? 0x51f15e : seed);
+  const r = () => (rand() - 0.5) * 1.6;
   const net = { n1, n2, W1: [], b1: [], W2: [], b2: [], W3: [], b3: r() };
   for (let i = 0; i < n1; i++) { net.W1.push([r(), r()]); net.b1.push(r()); }
   for (let j = 0; j < n2; j++) { const row = []; for (let i = 0; i < n1; i++) row.push(r()); net.W2.push(row); net.b2.push(r()); net.W3.push(r()); }
   return net;
 }
 function mlpData(kind) {
+  const rand = mlpRng(kind === 'xor' ? 0x584f52 : 0xc1ac1e);
   const pts = [];
   for (let i = 0; i < 48; i++) {
-    const x = Math.random(), y = Math.random();
+    const x = rand(), y = rand();
     const t = kind === 'xor' ? (((x > 0.5) !== (y > 0.5)) ? 1 : 0) : (Math.hypot(x - 0.5, y - 0.5) < 0.25 ? 1 : 0);
     pts.push({ x, y, t });
   }
-  if (kind === 'circle') for (let i = 0; i < 16; i++) { const a = Math.random() * 6.283, rr = Math.random() * 0.2; pts.push({ x: 0.5 + Math.cos(a) * rr, y: 0.5 + Math.sin(a) * rr, t: 1 }); }
+  if (kind === 'circle') for (let i = 0; i < 16; i++) { const a = rand() * 6.283, rr = rand() * 0.2; pts.push({ x: 0.5 + Math.cos(a) * rr, y: 0.5 + Math.sin(a) * rr, t: 1 }); }
   return pts;
 }
 // 真实反向传播（全批量 MSE 梯度下降），返回损失
@@ -3986,36 +4179,115 @@ function mlpTrainStep(net, data, lr) {
   net.b3 -= k * gb3;
   return loss / data.length;
 }
+function mlpRebuild(s, n1, n2) {
+  const h1 = Math.max(2, Math.min(8, Math.round(n1)));
+  const h2 = Math.max(2, Math.min(8, Math.round(n2)));
+  s.seed = ((s.seed || 0x51f15e) + 0x9e3779b9) >>> 0;
+  s.net = mlpInit(h1, h2, s.seed);
+  s.loss = []; s.epoch = 0; s.test = null; s.training = false; s.dragMode = null; s.dragLayer = null; s.dragPreview = null;
+}
+function mlpLayout(W, H, s) {
+  const heat = { x: W * 0.04, y: H * 0.04, w: W * 0.55, h: H * 0.48 };
+  const nx0 = W * 0.66, nx3 = W * 0.96;
+  const colX = [nx0, nx0 + (nx3 - nx0) / 3, nx0 + 2 * (nx3 - nx0) / 3, nx3];
+  const netTop = heat.y + 24, netH = Math.max(52, heat.h - 38);
+  const ui = {
+    heat,
+    colX,
+    netTop,
+    netH,
+    hiddenZones: [
+      { layer: 1, x: colX[1] - 16, y: netTop, w: 32, h: netH },
+      { layer: 2, x: colX[2] - 16, y: netTop, w: 32, h: netH }
+    ],
+    palette: { x: W * 0.69, y: H * 0.59, r: 12, hitR: 24 },
+    trash: { x: W * 0.79, y: H * 0.535, w: Math.max(50, W * 0.17), h: 44 },
+    hiddenNodes: [],
+    loss: { x: W * 0.06, y: H * 0.68, w: W * 0.88, h: H * 0.08 },
+    train: { x: W * 0.08, y: H * 0.82, w: W * 0.84, h: Math.max(34, Math.min(46, H * 0.12)) }
+  };
+  if (s && s.net) {
+    [1, 2].forEach(layer => {
+      const count = layer === 1 ? s.net.n1 : s.net.n2;
+      for (let i = 0; i < count; i++) ui.hiddenNodes.push({
+        layer, index: i, x: colX[layer], y: netTop + (i + 0.5) * netH / count, r: 5.5, hitR: 16
+      });
+    });
+  }
+  return ui;
+}
+function mlpInside(box, x, y) { return !!box && x >= box.x && x <= box.x + box.w && y >= box.y && y <= box.y + box.h; }
+function mlpNearCircle(circle, x, y) { return !!circle && Math.hypot(x - circle.x, y - circle.y) <= (circle.hitR || circle.r || 0); }
+function mlpSetTest(s, box, x, y) {
+  s.test = {
+    x: Math.max(0, Math.min(1, (x - box.x) / box.w)),
+    y: Math.max(0, Math.min(1, (y - box.y) / box.h))
+  };
+}
 const mlp = {
-  id: 'mlp', title: '全连接神经网络', sub: '真实反向传播训练 / 决策边界', category: '人工智能', color: '#7C4DFF', emoji: '🧠',
+  id: 'mlp', title: '全连接神经网络', sub: '直接搭建网络 / 真实反向传播', category: '人工智能', color: '#7C4DFF', emoji: '🧠',
+  stageRatio: 0.62, stageMinHeight: 220,
+  hint: '拖动神经元到 H1/H2 · 拖节点到删除区 · 按住训练',
+  forward: mlpForward, trainStep: mlpTrainStep, rebuild: mlpRebuild, layout: mlpLayout,
   params: [{ key: 'lr', label: '学习率', min: 0.2, max: 5, step: 0.1, value: 2, fmt: v => v.toFixed(1) }],
   actions: [
-    { label: s => s.training ? '⏸ 暂停训练' : '▶ 开始训练', primary: true, on(s) { s.training = !s.training; } },
-    { label: s => s.kind === 'xor' ? '数据:XOR' : '数据:圆环', on(s) { s.kind = s.kind === 'xor' ? 'circle' : 'xor'; s.data = mlpData(s.kind); s.net = mlpInit(6, 5); s.loss = []; s.epoch = 0; } },
-    { label: '重置网络', on(s) { s.net = mlpInit(6, 5); s.loss = []; s.epoch = 0; } }
+    { label: s => s.kind === 'xor' ? '数据:XOR' : '数据:圆环', on(s) { s.kind = s.kind === 'xor' ? 'circle' : 'xor'; s.data = mlpData(s.kind); mlpRebuild(s, s.net.n1, s.net.n2); } },
+    { label: '重置网络', on(s) { mlpRebuild(s, s.net.n1, s.net.n2); } }
   ],
-  init() { return { net: mlpInit(6, 5), data: mlpData('xor'), kind: 'xor', training: false, loss: [], epoch: 0, test: null, W: 360, H: 500 }; },
+  init() {
+    const seed = 0x51f15e;
+    return { seed, net: mlpInit(6, 5, seed), data: mlpData('xor'), kind: 'xor', training: false, loss: [], epoch: 0, test: null, dragMode: null, dragLayer: null, dragPreview: null, W: 360, H: 500, _ui: null };
+  },
   step(s, p, dt) {
     if (!s.training || dt <= 0) return;
+    const steps = Math.max(1, Math.min(6, Math.round(dt * 180)));
     let L = 0;
-    for (let k = 0; k < 6; k++) { L = mlpTrainStep(s.net, s.data, p.lr); s.epoch++; }
+    for (let k = 0; k < steps; k++) { L = mlpTrainStep(s.net, s.data, p.lr); s.epoch++; }
     s.loss.push(L); if (s.loss.length > 160) s.loss.shift();
   },
   onTap(s, p, x, y) {
-    const W = s.W || 360, H = s.H || 500;
-    const mx = W * 0.04, my = H * 0.04, mw = W * 0.55, mh = H * 0.5;
-    if (x >= mx && x <= mx + mw && y >= my && y <= my + mh) s.test = { x: (x - mx) / mw, y: (y - my) / mh };
+    const ui = mlpLayout(s.W || 360, s.H || 500, s); s._ui = ui;
+    if (mlpInside(ui.heat, x, y)) mlpSetTest(s, ui.heat, x, y);
+  },
+  onDragStart(s, p, x, y) {
+    const ui = mlpLayout(s.W || 360, s.H || 500, s); s._ui = ui;
+    if (mlpNearCircle(ui.palette, x, y)) {
+      s.dragMode = 'newNeuron'; s.dragPreview = { x, y }; return true;
+    }
+    const node = ui.hiddenNodes.slice().sort((a, b) => Math.hypot(x - a.x, y - a.y) - Math.hypot(x - b.x, y - b.y)).find(n => mlpNearCircle(n, x, y));
+    if (node) {
+      s.dragMode = 'removeNeuron'; s.dragLayer = node.layer; s.dragPreview = { x, y }; return true;
+    }
+    if (mlpInside(ui.train, x, y)) { s.training = true; s.dragMode = 'train'; return true; }
+    if (mlpInside(ui.heat, x, y)) { s.dragMode = 'test'; mlpSetTest(s, ui.heat, x, y); return true; }
+    return false;
+  },
+  onDragMove(s, p, x, y) {
+    if (s.dragMode === 'test') mlpSetTest(s, (s._ui || mlpLayout(s.W || 360, s.H || 500, s)).heat, x, y);
+    else if (s.dragMode === 'newNeuron' || s.dragMode === 'removeNeuron') s.dragPreview = { x, y };
+  },
+  onDragEnd(s, p, x, y) {
+    const mode = s.dragMode, layer = s.dragLayer, ui = s._ui || mlpLayout(s.W || 360, s.H || 500, s);
+    if (mode === 'train') s.training = false;
+    else if (mode === 'newNeuron') {
+      const zone = ui.hiddenZones.find(z => mlpInside(z, x, y));
+      if (zone && (zone.layer === 1 ? s.net.n1 : s.net.n2) < 8) mlpRebuild(s, s.net.n1 + (zone.layer === 1 ? 1 : 0), s.net.n2 + (zone.layer === 2 ? 1 : 0));
+    } else if (mode === 'removeNeuron' && mlpInside(ui.trash, x, y)) {
+      if ((layer === 1 ? s.net.n1 : s.net.n2) > 2) mlpRebuild(s, s.net.n1 - (layer === 1 ? 1 : 0), s.net.n2 - (layer === 2 ? 1 : 0));
+    }
+    s.dragMode = null; s.dragLayer = null; s.dragPreview = null;
   },
   draw(ctx, W, H, s, p) {
     s.W = W; s.H = H;
+    const ui = mlpLayout(W, H, s); s._ui = ui;
+    const mx = ui.heat.x, my = ui.heat.y, mw = ui.heat.w, mh = ui.heat.h;
     ctx.fillStyle = '#12121F'; ctx.fillRect(0, 0, W, H);
-    const mx = W * 0.04, my = H * 0.04, mw = W * 0.55, mh = H * 0.5;
-    // 决策边界热图（每格跑一次前向传播）
+    // 决策边界热图（每格跑一次前向传播；训练只发生在 step 中）。
     const cell = 10;
     for (let gy = 0; gy < mh; gy += cell) for (let gx = 0; gx < mw; gx += cell) {
       const v = mlpForward(s.net, (gx + cell / 2) / mw, (gy + cell / 2) / mh).y;
       ctx.fillStyle = 'rgba(' + Math.round(255 * v) + ',' + Math.round(110 * (1 - Math.abs(v - 0.5) * 2)) + ',' + Math.round(255 * (1 - v)) + ',0.55)';
-      ctx.fillRect(mx + gx, my + gy, cell, cell);
+      ctx.fillRect(mx + gx, my + gy, Math.min(cell, mw - gx), Math.min(cell, mh - gy));
     }
     s.data.forEach(d => {
       ctx.fillStyle = d.t ? '#FF8A65' : '#4FC3F7';
@@ -4029,12 +4301,14 @@ const mlp = {
       ctx.beginPath(); ctx.moveTo(tx - 8, ty); ctx.lineTo(tx + 8, ty); ctx.moveTo(tx, ty - 8); ctx.lineTo(tx, ty + 8); ctx.stroke();
     }
     ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5; ctx.strokeRect(mx, my, mw, mh);
-    // 网络结构：2-6-5-1，边=权重（红正蓝负粗细=大小），节点亮度=推理时激活值
-    const nx0 = W * 0.66, nx3 = W * 0.96;
-    const cols = [2, s.net.n1, s.net.n2, 1];
-    const colX = [nx0, nx0 + (nx3 - nx0) / 3, nx0 + 2 * (nx3 - nx0) / 3, nx3];
-    const nodeY = (ci, i) => my + (i + 0.5) * mh / cols[ci];
+    // 网络拓扑：从托盘拖入神经元增加层宽；将隐藏节点拖进删除区减少层宽。
+    const cols = [2, s.net.n1, s.net.n2, 1], colX = ui.colX;
+    const nodeY = (ci, i) => ui.netTop + (i + 0.5) * ui.netH / cols[ci];
     const acts = testOut ? [[s.test.x, s.test.y], testOut.h1, testOut.h2, [testOut.y]] : null;
+    if (s.dragMode === 'newNeuron') ui.hiddenZones.forEach(zone => {
+      ctx.fillStyle = 'rgba(105,240,174,0.12)'; ctx.fillRect(zone.x, zone.y, zone.w, zone.h);
+      ctx.strokeStyle = '#69F0AE'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.strokeRect(zone.x, zone.y, zone.w, zone.h); ctx.setLineDash([]);
+    });
     const edge = (x1, y1, x2, y2, w) => {
       ctx.strokeStyle = w > 0 ? 'rgba(255,110,80,' + Math.min(Math.abs(w) / 2, 0.85) + ')' : 'rgba(80,160,255,' + Math.min(Math.abs(w) / 2, 0.85) + ')';
       ctx.lineWidth = Math.min(0.5 + Math.abs(w) * 0.7, 3);
@@ -4047,11 +4321,27 @@ const mlp = {
       let a = acts ? acts[ci][i] : 0;
       if (ci > 0 && ci < 3) a = (a + 1) / 2;
       ctx.fillStyle = acts ? 'rgba(255,235,59,' + (0.15 + 0.85 * Math.max(0, Math.min(1, a))) + ')' : '#455A64';
-      ctx.beginPath(); ctx.arc(colX[ci], nodeY(ci, i), 6, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.arc(colX[ci], nodeY(ci, i), 5.5, 0, 7); ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1; ctx.stroke();
     }
+    ctx.save(); ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#D1C4E9'; ctx.fillText('H1 ' + s.net.n1, colX[1], ui.heat.y + 8); ctx.fillText('H2 ' + s.net.n2, colX[2], ui.heat.y + 8);
+    // 神经元托盘：视觉圆点较小，实际触摸半径为 24px。
+    ctx.fillStyle = '#7C4DFF'; ctx.beginPath(); ctx.arc(ui.palette.x, ui.palette.y, ui.palette.r, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#D1C4E9'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#EDE7F6'; ctx.font = '9px sans-serif'; ctx.fillText('神经元', ui.palette.x, ui.palette.y + 22);
+    // 删除区提供至少 44px 高的拖放目标。
+    ctx.fillStyle = s.dragMode === 'removeNeuron' ? 'rgba(239,83,80,0.32)' : 'rgba(255,255,255,0.08)';
+    roundRect(ctx, ui.trash.x, ui.trash.y, ui.trash.w, ui.trash.h, 9); ctx.fill();
+    ctx.strokeStyle = s.dragMode === 'removeNeuron' ? '#FF8A80' : 'rgba(255,255,255,0.25)'; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.fillStyle = s.dragMode === 'removeNeuron' ? '#FFCDD2' : '#B0BEC5'; ctx.font = 'bold 10px sans-serif'; ctx.fillText('删除', ui.trash.x + ui.trash.w / 2, ui.trash.y + ui.trash.h / 2);
+    if (s.dragPreview) {
+      ctx.globalAlpha = 0.82; ctx.fillStyle = s.dragMode === 'removeNeuron' ? '#FF8A80' : '#69F0AE';
+      ctx.beginPath(); ctx.arc(s.dragPreview.x, s.dragPreview.y, 10, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+    }
+    ctx.restore();
     // 损失曲线
-    const ly = H * 0.62, lh2 = H * 0.14, lx = W * 0.06, lw2 = W * 0.88;
+    const lx = ui.loss.x, ly = ui.loss.y, lw2 = ui.loss.w, lh2 = ui.loss.h;
     ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.strokeRect(lx, ly, lw2, lh2);
     if (s.loss.length > 1) {
       const maxL = Math.max.apply(null, s.loss);
@@ -4059,97 +4349,345 @@ const mlp = {
       s.loss.forEach((L, i) => { const X = lx + i / 159 * lw2, Y = ly + lh2 - L / (maxL || 1) * lh2 * 0.9; i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
       ctx.stroke();
     }
-    ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '10px sans-serif'; ctx.fillText('损失曲线', lx + 4, ly + 12);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font = '10px sans-serif'; ctx.fillText('损失曲线', lx + 4, ly + 12);
+    // 画布内按住训练区，松手立即暂停；不再依赖主按钮。
+    ctx.fillStyle = s.training ? '#00A86B' : 'rgba(124,77,255,0.9)';
+    roundRect(ctx, ui.train.x, ui.train.y, ui.train.w, ui.train.h, 11); ctx.fill();
+    ctx.strokeStyle = s.training ? '#69F0AE' : '#B39DDB'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(s.training ? '正在训练，松手暂停' : '按住这里训练', ui.train.x + ui.train.w / 2, ui.train.y + ui.train.h / 2);
+    ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
     let acc = 0; s.data.forEach(d => { if ((mlpForward(s.net, d.x, d.y).y > 0.5 ? 1 : 0) === d.t) acc++; });
-    readout(ctx, [['训练轮次', s.epoch + ''], ['损失', s.loss.length ? s.loss[s.loss.length - 1].toFixed(4) : '—'], ['准确率', (acc / s.data.length * 100).toFixed(0) + '%'], ['推理', testOut ? '输出 ' + testOut.y.toFixed(2) + ' → 类别 ' + (testOut.y > 0.5 ? '1' : '0') : '点击热图试推理']]);
+    readout(ctx, [
+      ['网络拓扑', '2-' + s.net.n1 + '-' + s.net.n2 + '-1'],
+      ['训练', s.epoch + ' · 损失 ' + (s.loss.length ? s.loss[s.loss.length - 1].toFixed(4) : '—')],
+      ['准确率', (acc / s.data.length * 100).toFixed(0) + '%'],
+      ['推理', testOut ? '输出 ' + testOut.y.toFixed(2) + ' → 类别 ' + (testOut.y > 0.5 ? '1' : '0') : '拖动热图试推理']
+    ]);
   }
 };
 
-// 卷积神经网络：卷积核滑动 / 特征图 / 池化
+// 卷积神经网络：手写输入 / 卷积核滑动 / 特征图 / 池化 / 离线训练分类
+const CN_DIGIT_BITMAPS = [
+  ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+  ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
+  ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
+  ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
+  ['00010', '00110', '01010', '10010', '11111', '00010', '00010'],
+  ['11111', '10000', '10000', '11110', '00001', '00001', '11110'],
+  ['01110', '10000', '10000', '11110', '10001', '10001', '01110'],
+  ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
+  ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
+  ['01110', '10001', '10001', '01111', '00001', '00001', '01110']
+];
+function cnEmptyImg() { return Array.from({ length: 12 }, () => new Array(12).fill(0)); }
 function cnMakeImg(kind) {
-  const img = Array.from({ length: 12 }, () => new Array(12).fill(0));
-  if (kind === 0) {
-    for (let c = 1; c < 11; c++) img[2][c] = 1;
-    for (let r = 3; r < 11; r++) img[r][Math.max(2, 10 - (r - 2))] = 1;
-  } else if (kind === 1) {
-    for (let c = 1; c < 11; c++) img[6][c] = 1;
-    for (let r = 1; r < 11; r++) img[r][6] = 1;
-  } else {
-    for (let c = 2; c < 10; c++) { img[2][c] = 1; img[9][c] = 1; }
-    for (let r = 2; r < 10; r++) { img[r][2] = 1; img[r][9] = 1; }
-  }
+  const digit = Math.max(0, Math.min(9, Math.round(kind)));
+  const img = cnEmptyImg(), glyph = CN_DIGIT_BITMAPS[digit];
+  for (let r = 0; r < 7; r++) for (let c = 0; c < 5; c++) if (glyph[r][c] === '1') img[r + 2][c + 3] = 1;
   return img;
 }
 const CN_KERNELS = [
   { name: '横向边缘', k: [[-1, -1, -1], [0, 0, 0], [1, 1, 1]] },
   { name: '纵向边缘', k: [[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]] },
   { name: '锐化', k: [[0, -1, 0], [-1, 5, -1], [0, -1, 0]] },
-  { name: '模糊', k: [[0.11, 0.11, 0.11], [0.11, 0.11, 0.11], [0.11, 0.11, 0.11]] }
+  { name: '模糊', k: [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]] }
 ];
+function cnConvolve(img, K, out) {
+  const fm = out && out.length === 100 ? out : new Array(100).fill(0);
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 10; c++) {
+    let v = 0;
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) v += img[r + i][c + j] * K[i][j];
+    fm[r * 10 + c] = v;
+  }
+  return fm;
+}
+function cnPool(fm, out) {
+  const pooled = out && out.length === 25 ? out : new Array(25).fill(0);
+  for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+    let m = 0;
+    for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) m = Math.max(m, Math.max(0, fm[(r * 2 + i) * 10 + c * 2 + j]));
+    pooled[r * 5 + c] = m;
+  }
+  return pooled;
+}
+// 将任意笔迹裁切、等比缩放并居中到 8×8 区域，减少书写位置带来的偏差。
+function cnNormalize(img) {
+  let minR = 12, maxR = -1, minC = 12, maxC = -1;
+  for (let r = 0; r < 12; r++) for (let c = 0; c < 12; c++) if (img[r][c]) {
+    minR = Math.min(minR, r); maxR = Math.max(maxR, r); minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+  }
+  const out = cnEmptyImg();
+  if (maxR < 0) return out;
+  const srcH = maxR - minR + 1, srcW = maxC - minC + 1;
+  const scale = Math.min(8 / srcW, 8 / srcH);
+  const dstW = Math.max(1, Math.round(srcW * scale)), dstH = Math.max(1, Math.round(srcH * scale));
+  const dstC = Math.floor((12 - dstW) / 2), dstR = Math.floor((12 - dstH) / 2);
+  for (let r = 0; r < dstH; r++) for (let c = 0; c < dstW; c++) {
+    const sr = minR + Math.min(srcH - 1, Math.floor((r + 0.5) * srcH / dstH));
+    const sc = minC + Math.min(srcW - 1, Math.floor((c + 0.5) * srcW / dstW));
+    out[dstR + r][dstC + c] = img[sr][sc] ? 1 : 0;
+  }
+  return out;
+}
+function cnNegKernel(K) { return K.map(row => row.map(v => -v)); }
+const CN_CLASS_KERNELS = [CN_KERNELS[0].k, cnNegKernel(CN_KERNELS[0].k), CN_KERNELS[1].k, cnNegKernel(CN_KERNELS[1].k), CN_KERNELS[3].k];
+// 固定卷积核 → ReLU → 2×2 最大池化，共 5×5×5=125 个特征。
+function cnExtractFeatures(img) {
+  const normalized = cnNormalize(img), vector = new Float32Array(125);
+  let offset = 0;
+  CN_CLASS_KERNELS.forEach((kernel, channel) => {
+    const fm = cnConvolve(normalized, kernel), scale = channel < 4 ? 1 / 3 : 1;
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
+      let m = 0;
+      for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) m = Math.max(m, Math.max(0, fm[(r * 2 + i) * 10 + c * 2 + j] * scale));
+      vector[offset++] = m;
+    }
+  });
+  return vector;
+}
+// 从应用内置 5×7 几何字形生成确定性倾斜/加粗样本；不是 MNIST，也不联网。
+function cnSyntheticDigit(digit, variant) {
+  const base = cnMakeImg(digit), out = cnEmptyImg();
+  const slants = [-0.24, -0.12, 0, 0.12, 0.24], slant = slants[variant % slants.length];
+  const thick = Math.floor(variant / slants.length) % 3, dx = variant % 3 - 1, dy = Math.floor(variant / 3) % 3 - 1;
+  const put = (r, c) => { if (r >= 0 && r < 12 && c >= 0 && c < 12) out[r][c] = 1; };
+  for (let r = 0; r < 12; r++) for (let c = 0; c < 12; c++) if (base[r][c]) {
+    const rr = r + dy, cc = c + dx + Math.round((r - 5) * slant);
+    put(rr, cc);
+    if (thick === 1) put(rr, cc + 1);
+    else if (thick === 2) put(rr + 1, cc);
+  }
+  return out;
+}
+function cnDenseSoftmax(model, vector, out) {
+  const probs = out || new Float64Array(10); let max = -Infinity;
+  for (let k = 0; k < 10; k++) {
+    let z = model.bias[k], off = k * model.featureCount;
+    for (let i = 0; i < model.featureCount; i++) z += model.weights[off + i] * vector[i];
+    probs[k] = z; max = Math.max(max, z);
+  }
+  let sum = 0;
+  for (let k = 0; k < 10; k++) { probs[k] = Math.exp(probs[k] - max); sum += probs[k]; }
+  for (let k = 0; k < 10; k++) probs[k] /= sum || 1;
+  return probs;
+}
+let CN_CLASSIFIER = null;
+function cnGetClassifier() {
+  if (CN_CLASSIFIER) return CN_CLASSIFIER;
+  const featureCount = 125, rand = mlpRng(0xc0ffee), weights = new Float32Array(10 * featureCount), bias = new Float32Array(10);
+  for (let i = 0; i < weights.length; i++) weights[i] = (rand() - 0.5) * 0.035;
+  const model = { featureCount, weights, bias, samples: 0, trainingAccuracy: 0 };
+  const data = [];
+  for (let digit = 0; digit < 10; digit++) for (let variant = 0; variant < 15; variant++) data.push({ digit, vector: cnExtractFeatures(cnSyntheticDigit(digit, variant)) });
+  model.samples = data.length;
+  const probs = new Float64Array(10);
+  // 在线交叉熵梯度下降；固定顺序和种子使每次离线训练完全一致。
+  for (let epoch = 0; epoch < 90; epoch++) {
+    const lr = 0.12 * (1 - epoch / 120);
+    for (let n = 0; n < data.length; n++) {
+      const sample = data[(n * 37 + epoch * 17) % data.length], vector = sample.vector;
+      cnDenseSoftmax(model, vector, probs);
+      for (let k = 0; k < 10; k++) {
+        const error = probs[k] - (k === sample.digit ? 1 : 0), off = k * featureCount;
+        for (let i = 0; i < featureCount; i++) weights[off + i] -= lr * error * vector[i];
+        bias[k] -= lr * error;
+      }
+    }
+  }
+  let correct = 0;
+  data.forEach(sample => {
+    const p = cnDenseSoftmax(model, sample.vector); let best = 0;
+    for (let k = 1; k < 10; k++) if (p[k] > p[best]) best = k;
+    if (best === sample.digit) correct++;
+  });
+  model.trainingAccuracy = correct / data.length;
+  CN_CLASSIFIER = model;
+  return model;
+}
+// 最终预测来自真实训练好的 Dense softmax 分类层，而不是模板最近邻。
+function cnRecognize(img) {
+  let ink = 0;
+  for (let r = 0; r < 12; r++) for (let c = 0; c < 12; c++) ink += img[r][c] ? 1 : 0;
+  if (ink < 2) return { digit: null, confidence: 0, probs: new Array(10).fill(0) };
+  const model = cnGetClassifier(), dense = cnDenseSoftmax(model, cnExtractFeatures(img)), probs = Array.from(dense);
+  let digit = 0; for (let i = 1; i < 10; i++) if (probs[i] > probs[digit]) digit = i;
+  return { digit, confidence: probs[digit], probs };
+}
+// 整数 Bresenham 插值保证手指快速划过多个格子时笔迹连续。
+function cnPaintLine(img, r0, c0, r1, c1, value) {
+  let x0 = Math.max(0, Math.min(11, Math.round(c0))), y0 = Math.max(0, Math.min(11, Math.round(r0)));
+  const x1 = Math.max(0, Math.min(11, Math.round(c1))), y1 = Math.max(0, Math.min(11, Math.round(r1)));
+  const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+  let err = dx + dy, changed = false;
+  while (true) {
+    const next = value ? 1 : 0;
+    if (img[y0][x0] !== next) { img[y0][x0] = next; changed = true; }
+    if (x0 === x1 && y0 === y1) break;
+    const e2 = 2 * err;
+    if (e2 >= dy) { err += dy; x0 += sx; }
+    if (e2 <= dx) { err += dx; y0 += sy; }
+  }
+  return changed;
+}
+function cnLayout(W, H) {
+  const inputCell = Math.min(W * 0.38 / 12, H * 0.38 / 12), ix = W * 0.04, iy = H * 0.08;
+  const featureCell = Math.min(W * 0.35 / 10, H * 0.32 / 10), fx = W * 0.57, fy = iy;
+  const kernel = { x: ix, y: iy + inputCell * 12 + 19, cellW: 27, cellH: 22 };
+  const brushY = Math.min(H - 29, kernel.y + kernel.cellH * 3 + 8);
+  const poolCell = featureCell * 1.35, poolY = fy + featureCell * 10 + 25;
+  return {
+    input: { x: ix, y: iy, cell: inputCell, w: inputCell * 12, h: inputCell * 12 },
+    feature: { x: fx, y: fy, cell: featureCell, w: featureCell * 10, h: featureCell * 10 },
+    kernel,
+    pool: { x: fx, y: poolY, cell: poolCell, w: poolCell * 5, h: poolCell * 5 },
+    brushWrite: { x: ix, y: brushY, w: 45, h: 23 },
+    brushErase: { x: ix + 51, y: brushY, w: 45, h: 23 }
+  };
+}
+function cnCellAt(ui, x, y) {
+  const box = ui && ui.input;
+  if (!box || x < box.x || y < box.y || x >= box.x + box.w || y >= box.y + box.h) return null;
+  return { r: Math.max(0, Math.min(11, Math.floor((y - box.y) / box.cell))), c: Math.max(0, Math.min(11, Math.floor((x - box.x) / box.cell))) };
+}
+function cnInside(box, x, y) { return !!box && x >= box.x && x <= box.x + box.w && y >= box.y && y <= box.y + box.h; }
+function cnMarkInputChanged(s) {
+  s.dirty = true; s.imgKind = -1; s.pos = 0; s.t = 0; s.running = false;
+}
+function cnLoadDigit(s, digit) {
+  s.imgKind = digit; s.img = cnMakeImg(digit); s.pos = 0; s.t = 0; s.running = false; s.dirty = true;
+}
+function cnRecompute(s) {
+  if (!s.dirty) return;
+  s.fm = cnConvolve(s.img, CN_KERNELS[s.kernel].k, s.fm);
+  s.pool = cnPool(s.fm, s.pool);
+  s.fmax = 0.001; for (let i = 0; i < s.fm.length; i++) s.fmax = Math.max(s.fmax, Math.abs(s.fm[i]));
+  const recognized = cnRecognize(s.img);
+  s.prediction = recognized.digit; s.confidence = recognized.confidence; s.probs = recognized.probs;
+  s.dirty = false;
+}
+function cnFmtValue(v) {
+  if (Math.abs(v - Math.round(v)) < 0.04) return String(Math.round(v));
+  return v.toFixed(1).replace('-0.0', '0.0');
+}
 const convnet = {
-  id: 'convnet', title: '卷积神经网络', sub: '卷积核滑动 / 特征图 / 池化', category: '人工智能', color: '#00B8D4', emoji: '🔬',
-  kernels: CN_KERNELS, makeImg: cnMakeImg,
+  id: 'convnet', title: '卷积神经网络', sub: '手写数字 / 卷积 / 特征图 / 池化', category: '人工智能', color: '#00B8D4', emoji: '🔬',
+  stageRatio: 0.62, stageMinHeight: 220,
+  hint: '在输入网格拖动手写 · 点写入/擦除切换画笔',
+  kernels: CN_KERNELS, makeImg: cnMakeImg, syntheticDigit: cnSyntheticDigit, convolve: cnConvolve, pool: cnPool, normalize: cnNormalize, extractFeatures: cnExtractFeatures, getClassifier: cnGetClassifier, recognize: cnRecognize, paintLine: cnPaintLine, layout: cnLayout,
   params: [{ key: 'speed', label: '滑动速度', min: 2, max: 40, step: 1, value: 12, fmt: v => v.toFixed(0) + ' 步/秒' }],
   actions: [
     { label: s => s.running ? '⏸ 暂停' : (s.pos >= 100 ? '↻ 重新卷积' : '▶ 开始卷积'), primary: true, on(s) { if (s.pos >= 100) { s.pos = 0; s.t = 0; s.running = true; } else s.running = !s.running; } },
-    { label: s => '图像:' + ['数字7', '十字', '方框'][s.imgKind], on(s) { s.imgKind = (s.imgKind + 1) % 3; s.img = cnMakeImg(s.imgKind); s.pos = 0; s.t = 0; } },
-    { label: s => '核:' + CN_KERNELS[s.kernel].name, on(s) { s.kernel = (s.kernel + 1) % CN_KERNELS.length; s.pos = 0; s.t = 0; } }
+    { label: s => '示例数字:' + (s.imgKind < 0 ? 0 : s.imgKind), on(s) { cnLoadDigit(s, s.imgKind < 0 ? 0 : (s.imgKind + 1) % 10); } },
+    { label: s => '核:' + CN_KERNELS[s.kernel].name, on(s) { s.kernel = (s.kernel + 1) % CN_KERNELS.length; s.pos = 0; s.t = 0; s.running = false; s.dirty = true; } },
+    { label: '清空输入', on(s) { s.img = cnEmptyImg(); cnMarkInputChanged(s); } }
   ],
-  init() { return { img: cnMakeImg(0), imgKind: 0, kernel: 0, pos: 0, t: 0, running: false, buzz: 0 }; },
+  init() {
+    const classifier = cnGetClassifier();
+    return { img: cnEmptyImg(), imgKind: -1, kernel: 0, brush: 1, pos: 0, t: 0, running: false, dragging: false, lastCell: null, dirty: true, fm: new Array(100).fill(0), pool: new Array(25).fill(0), fmax: 0.001, prediction: null, confidence: 0, probs: new Array(10).fill(0), classifierAccuracy: classifier.trainingAccuracy, buzz: 0, W: 360, H: 500, _ui: null };
+  },
   step(s, p, dt) {
     if (!s.running || dt <= 0) return;
     s.t += dt * p.speed;
     s.pos = Math.min(Math.floor(s.t), 100);
     if (s.pos >= 100) { s.running = false; s.buzz = (s.buzz | 0) + 1; }
   },
-  draw(ctx, W, H, s, p) {
+  onTap(s, p, x, y) {
+    const ui = s._ui || cnLayout(s.W || 360, s.H || 500);
+    if (cnInside(ui.brushWrite, x, y)) s.brush = 1;
+    else if (cnInside(ui.brushErase, x, y)) s.brush = 0;
+  },
+  onDragStart(s, p, x, y) {
+    const ui = s._ui || cnLayout(s.W || 360, s.H || 500), cell = cnCellAt(ui, x, y);
+    if (!cell) return false;
+    s.dragging = true; s.lastCell = cell;
+    if (cnPaintLine(s.img, cell.r, cell.c, cell.r, cell.c, s.brush)) cnMarkInputChanged(s);
+    return true;
+  },
+  onDragMove(s, p, x, y) {
+    if (!s.dragging) return;
+    const cell = cnCellAt(s._ui || cnLayout(s.W || 360, s.H || 500), x, y);
+    if (!cell) return;
+    const last = s.lastCell || cell;
+    if (cnPaintLine(s.img, last.r, last.c, cell.r, cell.c, s.brush)) cnMarkInputChanged(s);
+    s.lastCell = cell;
+  },
+  onDragEnd(s) { s.dragging = false; s.lastCell = null; },
+  draw(ctx, W, H, s) {
+    s.W = W; s.H = H;
+    const ui = cnLayout(W, H); s._ui = ui; cnRecompute(s);
+    const K = CN_KERNELS[s.kernel].k, done = Math.min(s.pos, 100), fm = s.fm, fmax = s.fmax;
     ctx.fillStyle = '#0D1B2A'; ctx.fillRect(0, 0, W, H);
-    const K = CN_KERNELS[s.kernel].k;
-    const fm = [];
-    for (let r = 0; r < 10; r++) { const row = []; for (let c = 0; c < 10; c++) { let v = 0; for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) v += s.img[r + i][c + j] * K[i][j]; row.push(v); } fm.push(row); }
-    const done = Math.min(s.pos, 100);
-    // 输入图 + 滑动窗口
-    const cs = Math.min(W * 0.36 / 12, H * 0.3 / 12), ix = W * 0.05, iy = H * 0.07;
+    // 输入图：每个像素都显示真实二值 0/1。
+    const ix = ui.input.x, iy = ui.input.y, cs = ui.input.cell;
+    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold ' + Math.max(5, Math.min(8, cs * 0.62)) + 'px monospace';
     for (let r = 0; r < 12; r++) for (let c = 0; c < 12; c++) {
-      ctx.fillStyle = s.img[r][c] ? '#E0F7FA' : '#1B3A4B';
-      ctx.fillRect(ix + c * cs, iy + r * cs, cs - 1, cs - 1);
+      const on = s.img[r][c] ? 1 : 0, x = ix + c * cs, y = iy + r * cs;
+      ctx.fillStyle = on ? '#E0F7FA' : '#173747'; ctx.fillRect(x, y, cs, cs);
+      ctx.strokeStyle = 'rgba(128,222,234,0.18)'; ctx.lineWidth = 0.6; ctx.strokeRect(x, y, cs, cs);
+      ctx.fillStyle = on ? '#073642' : '#8BB8C2'; ctx.fillText(String(on), x + cs / 2, y + cs / 2);
     }
+    ctx.restore();
     const cur = Math.max(Math.min(done, 99), 0), curR = Math.floor(cur / 10), curC = cur % 10;
     if (done < 100) { ctx.strokeStyle = '#FF5252'; ctx.lineWidth = 2; ctx.strokeRect(ix + curC * cs, iy + curR * cs, cs * 3, cs * 3); }
-    ctx.fillStyle = '#80DEEA'; ctx.font = '11px sans-serif'; ctx.fillText('输入 12×12', ix, iy - 6);
+    ctx.fillStyle = '#80DEEA'; ctx.font = '11px sans-serif'; ctx.fillText('输入 12×12（每格=0/1）', ix, iy - 6);
     // 卷积核数值面板
-    const kx = ix, ky = iy + 12 * cs + 20;
+    const kx = ui.kernel.x, ky = ui.kernel.y;
     ctx.fillText('卷积核（共享参数仅9个）', kx, ky - 5);
     for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) {
-      const v = K[i][j];
+      const v = K[i][j], x = kx + j * ui.kernel.cellW, y = ky + i * ui.kernel.cellH;
       ctx.fillStyle = v > 0 ? 'rgba(255,110,80,0.8)' : v < 0 ? 'rgba(80,160,255,0.8)' : 'rgba(255,255,255,0.15)';
-      ctx.fillRect(kx + j * 27, ky + i * 22, 25, 20);
-      ctx.fillStyle = '#fff'; ctx.fillText((v > 0 ? '+' : '') + (Math.abs(v) < 1 && v !== 0 ? v.toFixed(1) : v.toFixed(0)), kx + j * 27 + 3, ky + i * 22 + 14);
+      ctx.fillRect(x, y, ui.kernel.cellW - 2, ui.kernel.cellH - 2);
+      ctx.fillStyle = '#fff'; ctx.font = '10px monospace'; ctx.fillText((v > 0 ? '+' : '') + cnFmtValue(v), x + 3, y + 14);
     }
-    // 特征图逐格填充
-    const fx = W * 0.52, fy = H * 0.07, fs = Math.min(W * 0.32 / 10, H * 0.26 / 10);
-    let fmax = 0.001; fm.forEach(row => row.forEach(v => { fmax = Math.max(fmax, Math.abs(v)); }));
+    // 画布内写入/擦除工具。
+    [ui.brushWrite, ui.brushErase].forEach((box, i) => {
+      const active = s.brush === (i === 0 ? 1 : 0);
+      ctx.fillStyle = active ? '#00ACC1' : 'rgba(255,255,255,0.1)'; roundRect(ctx, box.x, box.y, box.w, box.h, 7); ctx.fill();
+      ctx.strokeStyle = active ? '#80DEEA' : 'rgba(255,255,255,0.25)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = active ? '#fff' : 'rgba(255,255,255,0.62)'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(i === 0 ? '写入' : '擦除', box.x + box.w / 2, box.y + box.h / 2);
+    });
+    ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    // 特征图逐格填充，每个已计算格都叠加对应数值。
+    const fx = ui.feature.x, fy = ui.feature.y, fs = ui.feature.cell;
+    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold ' + Math.max(5, Math.min(7, fs * 0.5)) + 'px monospace';
     for (let idx = 0; idx < done; idx++) {
-      const r = Math.floor(idx / 10), c = idx % 10, v = fm[r][c], a = Math.abs(v) / fmax;
-      ctx.fillStyle = v > 0 ? 'rgba(255,140,60,' + a + ')' : 'rgba(60,140,255,' + a + ')';
-      ctx.fillRect(fx + c * fs, fy + r * fs, fs - 1, fs - 1);
+      const r = Math.floor(idx / 10), c = idx % 10, v = fm[idx], a = Math.abs(v) / fmax, x = fx + c * fs, y = fy + r * fs;
+      ctx.fillStyle = v > 0 ? 'rgba(255,140,60,' + Math.max(0.16, a) + ')' : v < 0 ? 'rgba(60,140,255,' + Math.max(0.16, a) + ')' : 'rgba(255,255,255,0.08)';
+      ctx.fillRect(x, y, fs, fs);
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 0.5; ctx.strokeRect(x, y, fs, fs);
+      ctx.fillStyle = a > 0.5 ? '#fff' : '#B0BEC5'; ctx.fillText(cnFmtValue(v), x + fs / 2, y + fs / 2);
     }
+    ctx.restore();
     ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.lineWidth = 1; ctx.strokeRect(fx, fy, fs * 10, fs * 10);
-    ctx.fillStyle = '#80DEEA'; ctx.fillText('特征图 ' + done + '/100', fx, fy - 6);
-    // ReLU + 最大池化
-    const px3 = W * 0.52, py3 = fy + fs * 10 + 26, ps = fs * 1.4;
+    ctx.fillStyle = '#80DEEA'; ctx.font = '11px sans-serif'; ctx.fillText('特征图 ' + done + '/100', fx, fy - 6);
+    // ReLU + 最大池化，同样显示池化后的数值。
+    const px3 = ui.pool.x, py3 = ui.pool.y, ps = ui.pool.cell;
     ctx.fillText('ReLU→2×2池化', px3, py3 - 6);
     if (done >= 100) {
+      ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = 'bold ' + Math.max(5, Math.min(7, ps * 0.48)) + 'px monospace';
       for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) {
-        let m = 0;
-        for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) m = Math.max(m, Math.max(0, fm[r * 2 + i][c * 2 + j]));
-        ctx.fillStyle = 'rgba(255,140,60,' + Math.min(m / fmax, 1) + ')';
-        ctx.fillRect(px3 + c * ps, py3 + r * ps, ps - 1, ps - 1);
+        const m = s.pool[r * 5 + c], x = px3 + c * ps, y = py3 + r * ps;
+        ctx.fillStyle = 'rgba(255,140,60,' + Math.max(0.1, Math.min(m / fmax, 1)) + ')'; ctx.fillRect(x, y, ps, ps);
+        ctx.strokeStyle = 'rgba(255,255,255,0.13)'; ctx.strokeRect(x, y, ps, ps);
+        ctx.fillStyle = m / fmax > 0.45 ? '#fff' : '#CFD8DC'; ctx.fillText(cnFmtValue(m), x + ps / 2, y + ps / 2);
       }
+      ctx.restore();
       ctx.strokeStyle = 'rgba(255,255,255,0.25)'; ctx.strokeRect(px3, py3, ps * 5, ps * 5);
-    } else { ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillText('（卷积完成后显示）', px3, py3 + 18); }
-    const curV = done > 0 ? fm[Math.floor((done - 1) / 10)][(done - 1) % 10] : 0;
-    readout(ctx, [['卷积核', CN_KERNELS[s.kernel].name], ['当前输出值', done ? curV.toFixed(1) : '—'], ['参数量', '卷积9 vs 全连接14400'], ['进度', done + ' / 100']]);
+    } else { ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '10px sans-serif'; ctx.fillText('（卷积完成后显示）', px3, py3 + 18); }
+    // 识别结果来自卷积/池化特征上真实训练的 Dense softmax；训练集是包内合成字形，不联网也不冒充 MNIST。
+    const resultY = Math.min(H - 35, py3 + ps * 5 + 22);
+    ctx.fillStyle = s.prediction == null ? 'rgba(255,255,255,0.45)' : '#FFD54F'; ctx.font = 'bold 17px sans-serif';
+    ctx.fillText(s.prediction == null ? '请手写数字' : '预测 ' + s.prediction + ' · ' + (s.confidence * 100).toFixed(0) + '%', px3, resultY);
+    ctx.fillStyle = 'rgba(255,255,255,0.42)'; ctx.font = '9px sans-serif'; ctx.fillText('应用内置合成字形（非 MNIST）', px3, resultY + 14);
+    readout(ctx, [
+      ['识别结果', s.prediction == null ? '请手写数字' : String(s.prediction)],
+      ['置信度', s.prediction == null ? '—' : (s.confidence * 100).toFixed(0) + '%'],
+      ['识别方式', 'CNN + Dense softmax'],
+      ['训练集', '合成字形（非 MNIST）'],
+      ['卷积核', CN_KERNELS[s.kernel].name + ' · ' + done + '/100']
+    ]);
   }
 };
 
@@ -4529,11 +5067,8 @@ const colormix = {
 const electrolysis = {
   id: 'electrolysis', title: '电解水', sub: 'H₂:O₂ = 2:1', category: '化学', color: '#00B0FF', emoji: '⚗️',
   params: [{ key: 'current', label: '电流', min: 0.5, max: 3, step: 0.1, value: 1.5, fmt: v => v.toFixed(1) + ' A' }],
-  actions: [
-    { label: s => s.running ? '⏸ 暂停' : '▶ 通电', primary: true, on(s) { s.running = !s.running; } },
-    { label: '重置', on(s) { s.h2 = 0; s.o2 = 0; s.bubbles = []; s.running = false; s.full = false; } }
-  ],
-  init() { return { h2: 0, o2: 0, bubbles: [], running: false, full: false, buzz: 0 }; },
+  actions: [{ label: '重置', on(s) { s.h2 = 0; s.o2 = 0; s.bubbles = []; s.running = false; s.full = false; } }],
+  init() { return { h2: 0, o2: 0, bubbles: [], running: false, full: false, buzz: 0, _ui: null }; },
   step(s, p, dt) {
     if (!s.running || dt <= 0) return;
     s.h2 = Math.min(s.h2 + p.current * dt * 0.035, 1);
@@ -4545,6 +5080,12 @@ const electrolysis = {
     s.bubbles.forEach(b2 => { b2.y -= b2.sp * dt; });
     s.bubbles = s.bubbles.filter(b2 => b2.y > 0.15);
     if (s.h2 >= 1 && !s.full) { s.full = true; s.buzz = (s.buzz | 0) + 1; }
+  },
+  hint: '点按电源开关通断电',
+  onTap(s, p, x, y) {
+    const sw = s._ui && s._ui.switch;
+    if (!sw || x < sw.x || x > sw.x + sw.w || y < sw.y || y > sw.y + sw.h) return;
+    s.running = !s.running; s.buzz = (s.buzz | 0) + 1;
   },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#E1F5FE'; ctx.fillRect(0, 0, W, H);
@@ -4568,7 +5109,30 @@ const electrolysis = {
     ctx.fillStyle = '#1E88E5'; ctx.fillText('+ 阳极', tankX + tankW * 0.74 - 22, bot + 18);
     ctx.fillStyle = 'rgba(255,255,255,0.8)';
     s.bubbles.forEach(b2 => { ctx.beginPath(); ctx.arc(tankX + b2.x * tankW, top + 30 + b2.y * (bot - top - 60), 3, 0, 7); ctx.fill(); });
-    readout(ctx, [['氢气(阴极)', (s.h2 * 100).toFixed(0) + '%'], ['氧气(阳极)', (s.o2 * 100).toFixed(0) + '%'], ['体积比', s.o2 > 0.01 ? (s.h2 / s.o2).toFixed(1) + ' : 1（≈2:1）' : '—'], ['方程式', '2H₂O →通电→ 2H₂↑+O₂↑']]);
+    // 实体电源、导线和可点按的刀闸开关
+    const cathodeX = tankX + tankW * 0.26, anodeX = tankX + tankW * 0.74;
+    const circuitY = H * 0.91, batteryX = W * 0.42, switchX = W * 0.7;
+    ctx.strokeStyle = '#455A64'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cathodeX, bot - 6); ctx.lineTo(cathodeX, circuitY); ctx.lineTo(batteryX - 24, circuitY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(batteryX + 24, circuitY); ctx.lineTo(switchX - 18, circuitY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(switchX + 18, circuitY); ctx.lineTo(anodeX, circuitY); ctx.lineTo(anodeX, bot - 6); ctx.stroke();
+    drawBattery(ctx, batteryX, circuitY, false);
+    ctx.fillStyle = '#37474F'; ctx.beginPath(); ctx.arc(switchX - 18, circuitY, 5, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(switchX + 18, circuitY, 5, 0, 7); ctx.fill();
+    ctx.strokeStyle = s.running ? '#2E7D32' : '#C62828'; ctx.lineWidth = 5; ctx.beginPath();
+    ctx.moveTo(switchX - 18, circuitY);
+    ctx.lineTo(s.running ? switchX + 18 : switchX + 11, s.running ? circuitY : circuitY - 18); ctx.stroke();
+    ctx.fillStyle = s.running ? '#2E7D32' : '#C62828'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('电源开关', switchX, circuitY - 25, 82); ctx.textAlign = 'start';
+    const switchHit = { x: switchX - 34, y: circuitY - 38, w: 68, h: 64 };
+    s._ui = {
+      switch: switchHit, battery: { x: batteryX, y: circuitY, r: 25 },
+      cathode: { x: cathodeX, y: bot - 28 }, anode: { x: anodeX, y: bot - 28 },
+      tank: { x: tankX, y: top + 30, w: tankW, h: bot - top - 30 }
+    };
+    readout(ctx, [['氢气(阴极)', (s.h2 * 100).toFixed(0) + '%'], ['氧气(阳极)', (s.o2 * 100).toFixed(0) + '%'],
+      ['体积比', s.o2 > 0.01 ? (s.h2 / s.o2).toFixed(1) + ' : 1（≈2:1）' : '—'],
+      ['电源开关', s.running ? '已接通' : '已断开'], ['方程式', '2H₂O →通电→ 2H₂↑+O₂↑']]);
   }
 };
 
@@ -4790,9 +5354,9 @@ const impulse = {
     { key: 'cushion', label: '缓冲程度', min: 0.05, max: 1, step: 0.05, value: 0.3, fmt: v => v < 0.3 ? v.toFixed(2) + '（硬）' : v.toFixed(2) + '（软）' },
     { key: 'v0', label: '下落速度', min: 2, max: 8, step: 0.5, value: 5, fmt: v => v.toFixed(1) + ' m/s' }
   ],
-  actions: [
-    { label: s => s.phase === 'ready' ? '▶ 释放' : '↻ 再来一次', primary: true, on(s, p) { s.phase = 'fall'; s.dragging = false; s.y = 0.1; s.v = p.v0 * 0.25; s.hist = []; s.t = 0; s.maxF = 0; } }
-  ],
+  actions: [{ label: '重置', on(s) {
+    s.phase = 'ready'; s.dragging = false; s.y = 0.1; s.v = 0; s.hist = []; s.t = 0; s.maxF = 0;
+  } }],
   init() { return { phase: 'ready', y: 0.1, v: 0, hist: [], t: 0, maxF: 0, buzz: 0 }; },
   step(s, p, dt) {
     if (dt <= 0 || s.dragging || s.phase === 'ready' || s.phase === 'done') return;
@@ -5299,38 +5863,96 @@ const CM_RULES = {
   '氢氧化钠|石蕊试液': { desc: '石蕊遇碱变蓝', color: '#90CAF9', eq: '碱性 pH>7' },
   '稀盐酸|铁钉': { desc: '缓慢冒泡，溶液浅绿', color: '#DCEDC8', gas: 1, eq: 'Fe+2HCl→FeCl₂+H₂↑' }
 };
+const CM_REAGENT_COLORS = ['#81D4FA', '#CE93D8', '#64B5F6', '#B0BEC5', '#FFF59D', '#90A4AE', '#AB47BC'];
+function cmRule(recipe) {
+  if (!recipe || recipe.length < 2) return null;
+  return CM_RULES[recipe.slice(0, 2).sort().join('|')] || null;
+}
+function cmFeedback(s, text, color) {
+  s.feedback = text; s.feedbackColor = color || '#00695C'; s.feedbackT = 1.7;
+}
+function cmClear(s, announce) {
+  s.recipe = []; s.mixed = false; s.t = 0; s.bubbles = []; s.dragReagent = null;
+  if (announce) cmFeedback(s, '烧杯已清空', '#546E7A');
+}
+function cmAddReagent(s, index) {
+  const name = CM_REAGENTS[index];
+  if (!name) return false;
+  if (s.recipe.length >= 2) {
+    cmFeedback(s, '烧杯已满，请先清空', '#C62828'); return false;
+  }
+  if (s.recipe.indexOf(name) >= 0) {
+    cmFeedback(s, '该试剂已加入，请选择另一种', '#EF6C00'); return false;
+  }
+  s.recipe.push(name); s.t = 0; s.bubbles = [];
+  s.mixed = s.recipe.length >= 2;
+  s.buzz = (s.buzz | 0) + 1;
+  cmFeedback(s, s.mixed ? '自动反应开始' : '已加入 ' + name,
+    s.mixed ? '#00897B' : CM_REAGENT_COLORS[index]);
+  return true;
+}
+function cmPointIn(rect, x, y) {
+  return !!rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
+function cmBottle(ctx, x, y, w, h, color, alpha) {
+  ctx.save(); ctx.globalAlpha = alpha == null ? 1 : alpha;
+  ctx.fillStyle = 'rgba(255,255,255,0.92)'; roundRect(ctx, x - w / 2, y - h / 2, w, h, 5); ctx.fill();
+  ctx.fillStyle = color; ctx.fillRect(x - w * 0.36, y, w * 0.72, h * 0.34);
+  ctx.strokeStyle = '#546E7A'; ctx.lineWidth = 1.5; roundRect(ctx, x - w / 2, y - h / 2, w, h, 5); ctx.stroke();
+  ctx.fillStyle = '#78909C'; ctx.fillRect(x - w * 0.18, y - h * 0.68, w * 0.36, h * 0.18);
+  ctx.restore();
+}
 const chemmix = {
   id: 'chemmix', title: '化学混合台', sub: '自选试剂 / 观察反应现象', category: '化学', color: '#00ACC1', emoji: '🧫',
+  stageRatio: 0.6, stageMinHeight: 210,
+  hint: '拖动或点按试剂瓶加入烧杯',
   params: [],
-  actions: [
-    { label: s => 'A: ' + CM_REAGENTS[s.a], on(s) { s.a = (s.a + 1) % CM_REAGENTS.length; if (s.a === s.b) s.a = (s.a + 1) % CM_REAGENTS.length; s.mixed = false; s.t = 0; s.bubbles = []; } },
-    { label: s => 'B: ' + CM_REAGENTS[s.b], on(s) { s.b = (s.b + 1) % CM_REAGENTS.length; if (s.b === s.a) s.b = (s.b + 1) % CM_REAGENTS.length; s.mixed = false; s.t = 0; s.bubbles = []; } },
-    { label: s => s.mixed ? '↻ 重新混合' : '▶ 混合！', primary: true, on(s) { s.mixed = true; s.t = 0; s.bubbles = []; s.buzz = (s.buzz | 0) + 1; } }
-  ],
-  init() { return { a: 0, b: 3, mixed: false, t: 0, bubbles: [], buzz: 0 }; },
+  actions: [{ label: '清空烧杯', on(s) { cmClear(s, true); } }],
+  init() {
+    return { recipe: [], mixed: false, t: 0, bubbles: [], buzz: 0,
+      dragReagent: null, feedback: '', feedbackColor: '#00695C', feedbackT: 0, _ui: null };
+  },
   step(s, p, dt) {
-    if (dt <= 0 || !s.mixed) return;
+    if (dt <= 0) return;
+    if (s.feedbackT > 0) s.feedbackT = Math.max(0, s.feedbackT - dt);
+    if (!s.mixed) return;
     s.t += dt;
-    const rule = CM_RULES[[CM_REAGENTS[s.a], CM_REAGENTS[s.b]].sort().join('|')];
+    const rule = cmRule(s.recipe);
     if (rule && rule.gas && s.bubbles.length < 20 && Math.random() < dt * 10) s.bubbles.push({ x: 0.15 + Math.random() * 0.7, y: 1, sp: 0.25 + Math.random() * 0.25, r: 2 + Math.random() * 3 });
     s.bubbles.forEach(b2 => { b2.y -= b2.sp * dt; });
     s.bubbles = s.bubbles.filter(b2 => b2.y > 0.02);
   },
+  onDragStart(s, p, x, y) {
+    const hit = s._ui && s._ui.reagents.find(item => cmPointIn(item, x, y));
+    if (!hit) return false;
+    s.dragReagent = { index: hit.index, name: hit.name, x, y, startX: x, startY: y };
+    return true;
+  },
+  onDragMove(s, p, x, y) {
+    if (!s.dragReagent) return;
+    s.dragReagent.x = x; s.dragReagent.y = y;
+  },
+  onDragEnd(s, p, x, y) {
+    const drag = s.dragReagent;
+    if (!drag) return;
+    const moved = Math.hypot(x - drag.startX, y - drag.startY);
+    if (cmPointIn(s._ui && s._ui.beakerDrop, x, y) || moved < 12) cmAddReagent(s, drag.index);
+    else cmFeedback(s, '请拖到烧杯中', '#EF6C00');
+    s.dragReagent = null;
+  },
   draw(ctx, W, H, s) {
     ctx.fillStyle = '#F5F7F8'; ctx.fillRect(0, 0, W, H);
-    const rule = s.mixed ? CM_RULES[[CM_REAGENTS[s.a], CM_REAGENTS[s.b]].sort().join('|')] : null;
-    // 两个试剂瓶
-    const bottle = (x, label, col) => {
-      ctx.fillStyle = col; ctx.fillRect(x - 22, H * 0.1, 44, 54);
-      ctx.fillStyle = '#78909C'; ctx.fillRect(x - 8, H * 0.1 - 12, 16, 12);
-      ctx.strokeStyle = '#546E7A'; ctx.lineWidth = 2; ctx.strokeRect(x - 22, H * 0.1, 44, 54);
-      ctx.fillStyle = '#37474F'; ctx.font = '11px sans-serif'; ctx.fillText(label, x - label.length * 5.5, H * 0.1 + 74);
-    };
-    bottle(W * 0.3, CM_REAGENTS[s.a], '#B3E5FC');
-    bottle(W * 0.7, CM_REAGENTS[s.b], '#FFE0B2');
-    // 烧杯
-    const bx = W * 0.3, bw = W * 0.4, by = H * 0.4, bh = H * 0.34, liqY = by + bh * 0.3;
-    const mixColor = rule ? rule.color : (s.mixed ? '#ECEFF1' : '#E3F2FD');
+    const rule = s.mixed ? cmRule(s.recipe) : null;
+    const rackH = Math.max(58, Math.min(82, H * 0.24)), rackTop = H - rackH;
+    const bx = W * 0.22, bw = W * 0.5, by = Math.max(10, H * 0.06);
+    const bh = Math.max(54, Math.min(H * 0.43, rackTop - by - 30)), liqY = by + bh * 0.28;
+    const beakerDrop = { x: bx - 24, y: by - 28, w: bw + 48, h: bh + 50 };
+    const dragOver = s.dragReagent && cmPointIn(beakerDrop, s.dragReagent.x, s.dragReagent.y);
+    if (dragOver) {
+      ctx.fillStyle = 'rgba(0,172,193,0.12)'; roundRect(ctx, beakerDrop.x, beakerDrop.y, beakerDrop.w, beakerDrop.h, 16); ctx.fill();
+    }
+    const oneIndex = s.recipe.length === 1 ? CM_REAGENTS.indexOf(s.recipe[0]) : -1;
+    const mixColor = rule ? rule.color : (oneIndex >= 0 ? CM_REAGENT_COLORS[oneIndex] : '#E3F2FD');
     ctx.fillStyle = mixColor; ctx.fillRect(bx, liqY, bw, by + bh - liqY);
     // 沉淀
     if (rule && rule.precip) {
@@ -5344,6 +5966,10 @@ const chemmix = {
     s.bubbles.forEach(b2 => { ctx.beginPath(); ctx.arc(bx + b2.x * bw, liqY + b2.y * (by + bh - liqY), b2.r, 0, 7); ctx.fill(); });
     ctx.strokeStyle = '#78909C'; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx, by + bh); ctx.lineTo(bx + bw, by + bh); ctx.lineTo(bx + bw, by); ctx.stroke();
+    if (dragOver) { ctx.strokeStyle = '#00ACC1'; ctx.lineWidth = 3; ctx.stroke(); }
+    ctx.fillStyle = '#455A64'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(s.recipe.length ? s.recipe.join(' + ') : '烧杯', bx + bw / 2, by + 18, bw - 12);
+    ctx.textAlign = 'start';
     // 温度计（放热反应升温）
     const tx2 = bx + bw + 30, tTop = by, tBot = by + bh;
     ctx.strokeStyle = '#90A4AE'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(tx2, tTop); ctx.lineTo(tx2, tBot); ctx.stroke();
@@ -5351,8 +5977,44 @@ const chemmix = {
     ctx.strokeStyle = '#E53935'; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.moveTo(tx2, tBot); ctx.lineTo(tx2, tBot - (0.25 + warm * 0.55) * bh); ctx.stroke();
     ctx.fillStyle = '#E53935'; ctx.beginPath(); ctx.arc(tx2, tBot + 5, 7, 0, 7); ctx.fill();
-    const phen = !s.mixed ? '选好试剂后点「混合」' : (rule ? rule.desc : '无明显现象');
-    readout(ctx, [['组合', CM_REAGENTS[s.a] + ' + ' + CM_REAGENTS[s.b]], ['现象', phen], ['方程式', rule ? rule.eq : '—'], ['温度', rule && rule.heat && s.mixed ? '升高 ↑（放热）' : '不变']]);
+    // 底部试剂架：整个单元格都是触摸区，小屏也保持可操作。
+    ctx.fillStyle = '#E0EAED'; ctx.fillRect(0, rackTop, W, rackH);
+    ctx.fillStyle = '#546E7A'; ctx.font = 'bold 9px sans-serif'; ctx.fillText('试剂架', 6, rackTop + 11);
+    const cellW = W / CM_REAGENTS.length, reagentUi = [];
+    CM_REAGENTS.forEach((name, i) => {
+      const cx = cellW * (i + 0.5), bottleY = rackTop + Math.min(34, rackH * 0.5);
+      const bw2 = Math.min(28, cellW * 0.56), bh2 = Math.min(32, rackH * 0.48);
+      cmBottle(ctx, cx, bottleY, bw2, bh2, CM_REAGENT_COLORS[i], 1);
+      ctx.fillStyle = '#37474F'; ctx.font = '8px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(name, cx, H - 4, cellW - 3); ctx.textAlign = 'start';
+      reagentUi.push({ index: i, name, x: i * cellW, y: rackTop + 10, w: cellW, h: rackH - 10, cx, cy: bottleY });
+    });
+    if (s.dragReagent) {
+      cmBottle(ctx, s.dragReagent.x, s.dragReagent.y - 5, 34, 42,
+        CM_REAGENT_COLORS[s.dragReagent.index], 0.82);
+      ctx.fillStyle = '#263238'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(s.dragReagent.name, s.dragReagent.x, s.dragReagent.y + 28, 90); ctx.textAlign = 'start';
+    }
+    if (s.feedback && s.feedbackT > 0) {
+      ctx.font = 'bold 11px sans-serif';
+      const fw = Math.min(W - 24, Math.max(132, ctx.measureText(tr(s.feedback)).width + 24));
+      ctx.fillStyle = 'rgba(255,255,255,0.94)'; roundRect(ctx, (W - fw) / 2, rackTop - 28, fw, 24, 12); ctx.fill();
+      ctx.strokeStyle = s.feedbackColor; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = s.feedbackColor; ctx.textAlign = 'center'; ctx.fillText(s.feedback, W / 2, rackTop - 12, fw - 12); ctx.textAlign = 'start';
+    }
+    s._ui = {
+      beaker: { x: bx, y: by, w: bw, h: bh }, beakerDrop,
+      rack: { x: 0, y: rackTop, w: W, h: rackH }, reagents: reagentUi,
+      recipe: s.recipe.slice(), drag: s.dragReagent ? {
+        index: s.dragReagent.index, name: s.dragReagent.name,
+        x: s.dragReagent.x, y: s.dragReagent.y,
+        startX: s.dragReagent.startX, startY: s.dragReagent.startY
+      } : null
+    };
+    const phen = !s.recipe.length ? '从试剂架拖入两种试剂' :
+      s.recipe.length === 1 ? '再加入一种试剂，自动反应' : (rule ? rule.desc : '无明显现象');
+    readout(ctx, [['组合', s.recipe.length ? s.recipe.join(' + ') : '—'], ['现象', phen],
+      ['方程式', rule ? rule.eq : '—'], ['温度', rule && rule.heat ? '升高 ↑（放热）' : '不变']]);
   }
 };
 
@@ -5705,7 +6367,9 @@ function clResetLoose(s) {
     clComponent('c3', 'resistor', 288, 232),
     clComponent('c4', 'switch', 72, 232)
   ];
-  s.wires = []; s.nextId = 5; s.selected = null; s.dirty = true; s.laidOut = false;
+  s.wires = []; s.nextId = 5; s.selected = null; s.selectedWire = null;
+  s.dragItem = null; s.dragWire = null; s.wireDraft = null; s.dragOffset = null;
+  s.dirty = true; s.laidOut = false;
 }
 function clLoadExample(s) {
   clResetLoose(s);
@@ -5723,6 +6387,43 @@ function clDistanceToSegment(px, py, ax, ay, bx, by) {
   const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / den));
   return Math.hypot(px - (ax + dx * t), py - (ay + dy * t));
 }
+function clPointIn(rect, x, y) {
+  return !!rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
+function clTrash(W) {
+  const w = Math.max(62, Math.min(78, W * 0.22));
+  return { x: W - w - 8, y: 8, w, h: 48 };
+}
+function clRemoveWire(s, index) {
+  if (index == null || index < 0 || index >= s.wires.length) return false;
+  s.wires.splice(index, 1); s.selectedWire = null; s.dragWire = null;
+  s.dirty = true; s.buzz = (s.buzz | 0) + 1; return true;
+}
+function clRemoveComponent(s, id) {
+  if (!id || !s.items.some(c => c.id === id)) return false;
+  s.items = s.items.filter(c => c.id !== id);
+  s.wires = s.wires.filter(w => !w.a.startsWith(id + ':') && !w.b.startsWith(id + ':'));
+  s.selected = null; s.selectedWire = null; s.dragItem = null; s.dragOffset = null;
+  s.dirty = true; s.buzz = (s.buzz | 0) + 1; return true;
+}
+function clConstrainLayout(s, W, H) {
+  const oldW = s.W || W, oldH = s.H || H;
+  if (s.laidOut && oldW > 0 && oldH > 0 && (Math.abs(oldW - W) > 0.5 || Math.abs(oldH - H) > 0.5)) {
+    const oldWorkspaceH = Math.max(1, oldH - 74), newWorkspaceH = Math.max(1, H - 74);
+    s.items.forEach(c => {
+      c.x = c.x / oldW * W;
+      c.y = c.y / oldWorkspaceH * newWorkspaceH;
+    });
+  }
+  const minX = Math.min(46, W / 2), maxX = Math.max(minX, W - 46);
+  const minY = Math.min(48, Math.max(24, (H - 74) / 2));
+  const maxY = Math.max(minY, H - 82);
+  s.items.forEach(c => {
+    c.x = Math.max(minX, Math.min(maxX, c.x));
+    c.y = Math.max(minY, Math.min(maxY, c.y));
+  });
+  s.W = W; s.H = H;
+}
 function clPalette(W, H) {
   const y = H - 30;
   return ['battery', 'bulb', 'resistor', 'switch'].map((type, i) => ({
@@ -5731,20 +6432,20 @@ function clPalette(W, H) {
 }
 const circuitlab = {
   id: 'circuitlab', title: '自由电路搭建', sub: '拖动组件 / 接线柱连线 / 电子流动', category: '电磁', color: '#F4511E', emoji: '🧰',
-  hint: '拖动组件 · 从一个接线柱拖到另一个接线柱',
+  stageRatio: 0.62, stageMinHeight: 220,
+  hint: '拖动组件或导线到垃圾区删除 · 接线柱间连线',
   params: [],
   actions: [
     { label: '示例回路', primary: true, on(s) { clLoadExample(s); } },
     { label: '删除选中', on(s) {
-      if (!s.selected) return;
-      s.items = s.items.filter(c => c.id !== s.selected);
-      s.wires = s.wires.filter(w => !w.a.startsWith(s.selected + ':') && !w.b.startsWith(s.selected + ':'));
-      s.selected = null; s.dirty = true;
+      if (s.selectedWire != null) clRemoveWire(s, s.selectedWire);
+      else if (s.selected) clRemoveComponent(s, s.selected);
     } },
-    { label: '清空导线', on(s) { s.wires = []; s.dirty = true; } }
+    { label: '清空导线', on(s) { s.wires = []; s.selectedWire = null; s.dirty = true; } }
   ],
   init() {
-    const s = { items: [], wires: [], nextId: 1, selected: null, dirty: true, phase: 0, currents: {}, totalCurrent: 0, buzz: 0, W: 360, H: 500 };
+    const s = { items: [], wires: [], nextId: 1, selected: null, selectedWire: null,
+      dirty: true, phase: 0, currents: {}, totalCurrent: 0, buzz: 0, W: 360, H: 500, _ui: null };
     clResetLoose(s);
     return s;
   },
@@ -5800,33 +6501,47 @@ const circuitlab = {
     const terminal = (s._ui && s._ui.terminals || []).find(t => Math.hypot(x - t.x, y - t.y) < 20);
     if (terminal) {
       s.wireDraft = { from: terminal.key, x: terminal.x, y: terminal.y, tx: x, ty: y };
-      s.selected = terminal.id;
+      s.selected = terminal.id; s.selectedWire = null;
       return true;
     }
     const itemHit = s.items.slice().reverse().find(c => Math.abs(x - c.x) < 34 && Math.abs(y - c.y) < 28);
     if (itemHit) {
-      s.dragItem = itemHit.id; s.selected = itemHit.id;
-      s.dragOffset = { x: x - itemHit.x, y: y - itemHit.y, sx: x, sy: y };
+      s.dragItem = itemHit.id; s.selected = itemHit.id; s.selectedWire = null;
+      s.dragOffset = { x: x - itemHit.x, y: y - itemHit.y, sx: x, sy: y, px: x, py: y };
+      return true;
+    }
+    let wireHit = null, wireDistance = 16;
+    (s._ui && s._ui.wires || []).forEach(wire => {
+      const distance = clDistanceToSegment(x, y, wire.ax, wire.ay, wire.bx, wire.by);
+      if (distance < wireDistance) { wireHit = wire; wireDistance = distance; }
+    });
+    if (wireHit) {
+      const wasSelected = s.selectedWire === wireHit.index;
+      s.selected = null; s.selectedWire = wireHit.index;
+      s.dragWire = { index: wireHit.index, sx: x, sy: y, x, y, wasSelected };
       return true;
     }
     const paletteHit = clPalette(s.W || 360, s.H || 500).find(t => Math.hypot(x - t.x, y - t.y) < 34);
     if (paletteHit) {
       const id = 'c' + s.nextId++;
       const comp = clComponent(id, paletteHit.type, x, Math.min(y, (s.H || 500) - 78));
-      s.items.push(comp); s.dragItem = id; s.selected = id;
-      s.dragOffset = { x: 0, y: 0, sx: x, sy: y }; s.dirty = true;
+      s.items.push(comp); s.dragItem = id; s.selected = id; s.selectedWire = null;
+      s.dragOffset = { x: 0, y: 0, sx: x, sy: y, px: x, py: y }; s.dirty = true;
       return true;
     }
+    s.selected = null; s.selectedWire = null;
     return false;
   },
   onDragMove(s, p, x, y) {
     if (s.wireDraft) { s.wireDraft.tx = x; s.wireDraft.ty = y; return; }
+    if (s.dragWire) { s.dragWire.x = x; s.dragWire.y = y; return; }
     if (!s.dragItem) return;
     const comp = s.items.find(c => c.id === s.dragItem);
     if (!comp) return;
     const W = s.W || 360, H = s.H || 500;
-    comp.x = Math.max(46, Math.min(W - 46, x - s.dragOffset.x));
-    comp.y = Math.max(42, Math.min(H - 76, y - s.dragOffset.y));
+    s.dragOffset.px = x; s.dragOffset.py = y;
+    comp.x = Math.max(Math.min(46, W / 2), Math.min(Math.max(Math.min(46, W / 2), W - 46), x - s.dragOffset.x));
+    comp.y = Math.max(32, Math.min(Math.max(32, H - 82), y - s.dragOffset.y));
     s.dirty = true;
   },
   onDragEnd(s, p, x, y) {
@@ -5836,22 +6551,31 @@ const circuitlab = {
       if (target && target.id !== s.wireDraft.from.split(':')[0]) {
         const a = s.wireDraft.from, b = target.key;
         const duplicate = s.wires.some(w => (w.a === a && w.b === b) || (w.a === b && w.b === a));
-        if (!duplicate) { s.wires.push({ a, b }); s.buzz = (s.buzz | 0) + 1; }
+        if (!duplicate) { s.wires.push({ a, b }); s.selectedWire = null; s.buzz = (s.buzz | 0) + 1; }
         s.dirty = true;
       }
       s.wireDraft = null;
     }
+    if (s.dragWire) {
+      const moved = Math.hypot(x - s.dragWire.sx, y - s.dragWire.sy);
+      const shouldDelete = clPointIn(s._ui && s._ui.trash, x, y) || (moved < 10 && s.dragWire.wasSelected);
+      const index = s.dragWire.index;
+      s.dragWire = null;
+      if (shouldDelete) clRemoveWire(s, index);
+      else s.selectedWire = index;
+    }
     if (s.dragItem) {
       const comp = s.items.find(c => c.id === s.dragItem);
       const moved = s.dragOffset ? Math.hypot(x - s.dragOffset.sx, y - s.dragOffset.sy) : 99;
-      if (comp && comp.type === 'switch' && moved < 10) {
+      if (comp && clPointIn(s._ui && s._ui.trash, x, y)) {
+        clRemoveComponent(s, comp.id);
+      } else if (comp && comp.type === 'switch' && moved < 10) {
         comp.open = !comp.open; s.dirty = true; s.buzz = (s.buzz | 0) + 1;
       }
     }
     s.dragItem = null; s.dragOffset = null;
   },
   draw(ctx, W, H, s) {
-    s.W = W; s.H = H;
     if (!s.laidOut) {
       const left = W * 0.2, right = W * 0.8;
       const top = Math.max(72, Math.min(132, H * 0.32));
@@ -5864,15 +6588,15 @@ const circuitlab = {
         const comp = s.items.find(item => item.id === id);
         if (comp) { comp.x = x; comp.y = y; }
       });
-      s.laidOut = true; s.dirty = true;
+      s.laidOut = true; s.W = W; s.H = H; s.dirty = true;
     }
+    clConstrainLayout(s, W, H);
+    const trash = clTrash(W);
     ctx.fillStyle = '#FFF8F3'; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#EDE7E3'; ctx.fillRect(0, H - 62, W, 62);
     ctx.fillStyle = '#6D4C41'; ctx.font = '10px sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText('拖动组件到工作区', W - 8, 16);
-    ctx.fillText('从金色接线柱连线 · 轻点开关', W - 8, 31);
-    ctx.textAlign = 'start';
+    ctx.fillText('拖动组件到工作区', 8, 16, Math.max(80, trash.x - 16));
+    ctx.fillText('从金色接线柱连线 · 组件/导线可拖入垃圾区', 8, 31, Math.max(80, trash.x - 16));
     const byKey = {};
     s.items.forEach(c => {
       byKey[clKey(c.id, 'L')] = clTerm(c, 'L');
@@ -5880,10 +6604,13 @@ const circuitlab = {
     });
     // 电线与电子
     ctx.lineCap = 'round';
+    const wireUi = [];
     s.wires.forEach((wire, wi) => {
       const a = byKey[wire.a], b = byKey[wire.b];
       if (!a || !b) return;
-      ctx.strokeStyle = '#455A64'; ctx.lineWidth = 5;
+      wireUi.push({ index: wi, a: wire.a, b: wire.b, ax: a.x, ay: a.y, bx: b.x, by: b.y });
+      const selected = s.selectedWire === wi;
+      ctx.strokeStyle = selected ? '#FB8C00' : '#455A64'; ctx.lineWidth = selected ? 8 : 5;
       ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       if (s.totalCurrent > 0.02) {
         const count = Math.max(2, Math.round(Math.hypot(b.x - a.x, b.y - a.y) / 42));
@@ -5895,6 +6622,15 @@ const circuitlab = {
         }
       }
     });
+    if (s.dragWire) {
+      const wire = wireUi.find(item => item.index === s.dragWire.index);
+      if (wire) {
+        const dx = s.dragWire.x - s.dragWire.sx, dy = s.dragWire.y - s.dragWire.sy;
+        ctx.strokeStyle = '#F4511E'; ctx.lineWidth = 6; ctx.setLineDash([8, 6]);
+        ctx.beginPath(); ctx.moveTo(wire.ax + dx, wire.ay + dy); ctx.lineTo(wire.bx + dx, wire.by + dy); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
     if (s.wireDraft) {
       const a = byKey[s.wireDraft.from];
       if (a) {
@@ -5907,9 +6643,11 @@ const circuitlab = {
     let totalP = 0, batI = 0;
     s.items.forEach(c => {
       const L = clTerm(c, 'L'), R = clTerm(c, 'R'), Icur = s.currents[c.id] || 0;
+      ctx.fillStyle = 'rgba(255,255,255,0.9)'; roundRect(ctx, c.x - 31, c.y - 26, 62, 52, 10); ctx.fill();
+      ctx.strokeStyle = '#CFD8DC'; ctx.lineWidth = 1.5; ctx.stroke();
       if (s.selected === c.id) {
-        ctx.strokeStyle = '#FF8F00'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
-        ctx.strokeRect(c.x - 43, c.y - 31, 86, 62); ctx.setLineDash([]);
+        ctx.strokeStyle = '#FF8F00'; ctx.lineWidth = 2.5; ctx.setLineDash([5, 4]);
+        roundRect(ctx, c.x - 45, c.y - 33, 90, 68, 11); ctx.stroke(); ctx.setLineDash([]);
       }
       ctx.strokeStyle = '#37474F'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(L.x, L.y); ctx.lineTo(c.x - 20, c.y); ctx.moveTo(c.x + 20, c.y); ctx.lineTo(R.x, R.y); ctx.stroke();
@@ -5941,11 +6679,13 @@ const circuitlab = {
         ctx.lineTo(c.open ? c.x + 12 : c.x + 17, c.open ? c.y - 16 : c.y);
         ctx.stroke();
       }
-      ctx.fillStyle = '#6D4C41'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText(CL_SPEC[c.type].name, c.x, c.y + 34); ctx.textAlign = 'start';
+      ctx.fillStyle = '#5D4037'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(CL_SPEC[c.type].name, c.x, c.y + 39); ctx.textAlign = 'start';
       [L, R].forEach(t => {
-        ctx.fillStyle = '#FFB300'; ctx.beginPath(); ctx.arc(t.x, t.y, 7, 0, 7); ctx.fill();
-        ctx.strokeStyle = '#6D4C41'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = 'rgba(255,179,0,0.2)'; ctx.beginPath(); ctx.arc(t.x, t.y, 13, 0, 7); ctx.fill();
+        ctx.fillStyle = '#FFB300'; ctx.beginPath(); ctx.arc(t.x, t.y, 9, 0, 7); ctx.fill();
+        ctx.strokeStyle = '#6D4C41'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = '#FFF8E1'; ctx.beginPath(); ctx.arc(t.x, t.y, 3, 0, 7); ctx.fill();
       });
     });
     // 底部组件托盘（拖出即可复制）
@@ -5957,6 +6697,14 @@ const circuitlab = {
       const icon = { battery: '🔋', bulb: '💡', resistor: '〰', switch: '⏻' }[pal.type];
       ctx.fillText(icon + ' ' + CL_SPEC[pal.type].name, pal.x, pal.y + 4); ctx.textAlign = 'start';
     });
+    const dragPoint = s.dragWire ? { x: s.dragWire.x, y: s.dragWire.y } :
+      (s.dragOffset ? { x: s.dragOffset.px, y: s.dragOffset.py } : null);
+    const trashActive = dragPoint && clPointIn(trash, dragPoint.x, dragPoint.y);
+    ctx.fillStyle = trashActive ? 'rgba(198,40,40,0.94)' : 'rgba(255,255,255,0.92)';
+    roundRect(ctx, trash.x, trash.y, trash.w, trash.h, 12); ctx.fill();
+    ctx.strokeStyle = trashActive ? '#B71C1C' : '#EF9A9A'; ctx.lineWidth = trashActive ? 3 : 1.5; ctx.stroke();
+    ctx.fillStyle = trashActive ? '#fff' : '#C62828'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('🗑 删除', trash.x + trash.w / 2, trash.y + 29, trash.w - 8); ctx.textAlign = 'start';
     const terminals = [];
     s.items.forEach(c => {
       ['L', 'R'].forEach(side => {
@@ -5964,13 +6712,19 @@ const circuitlab = {
         terminals.push({ id: c.id, side, key: clKey(c.id, side), x: t.x, y: t.y });
       });
     });
-    s._ui = { terminals, palette, items: s.items.map(c => ({ id: c.id, x: c.x, y: c.y, type: c.type })) };
+    s._ui = {
+      bounds: { x: 0, y: 0, w: W, h: H }, trash, terminals, wires: wireUi, palette,
+      items: s.items.map(c => ({ id: c.id, x: c.x, y: c.y, type: c.type,
+        bounds: { x: c.x - 45, y: c.y - 33, w: 90, h: 68 } })),
+      selection: { componentId: s.selected, wireIndex: s.selectedWire }
+    };
     const closed = batI > 0.02;
     readout(ctx, [
       ['组件 / 导线', s.items.length + ' / ' + s.wires.length],
       ['电源电流', batI.toFixed(2) + ' A'],
       ['灯泡功率', totalP.toFixed(1) + ' W'],
-      ['状态', closed ? '回路闭合·电子流动' : '拖动接线柱完成回路']
+      ['状态', s.selectedWire != null ? '导线已选中·再点删除' :
+        (closed ? '回路闭合·电子流动' : '拖动接线柱完成回路')]
     ]);
   }
 };

@@ -16,14 +16,14 @@ val hasReleaseSigning = listOf("storeFile", "storePassword", "keyAlias", "keyPas
 
 android {
     namespace = "com.zhangfeiyang.gewu"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.zhangfeiyang.gewu"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 43
-        versionName = "3.9.0"
+        targetSdk = 35
+        versionCode = 44
+        versionName = "4.0.0"
     }
 
     signingConfigs {

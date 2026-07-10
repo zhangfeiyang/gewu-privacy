@@ -1,7 +1,7 @@
 const { SIMS, CATEGORIES, tr, setLanguage, getLanguage } = require('../../utils/sims.js');
 
 const LANG_KEY = 'gw_lang';
-const VERSION = '3.9.0';
+const VERSION = '4.0.0';
 
 function applyStoredLanguage() {
   setLanguage(wx.getStorageSync(LANG_KEY) || 'zh');
@@ -21,7 +21,7 @@ Page({
       zh: tr('中文'),
       en: 'English',
       desc1: tr('格物实验是一款原生、离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。取“格物致知”之意，教学理念受 PhET (phet.colorado.edu) 启发。'),
-      desc2: tr('拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏；点右上角「···」可把实验分享给朋友。')
+      desc2: tr('直接拖动、按压、连接、投料和手写，实时观察现象与数据；长按首页卡片可收藏；点右上角「···」可把实验分享给朋友。')
     };
   },
 

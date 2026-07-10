@@ -15,7 +15,7 @@
 环境要求：
 
 - JDK 17
-- Android SDK 34
+- Android SDK 35
 
 ```bash
 ./gradlew :app:assembleDebug
@@ -27,6 +27,16 @@ APK 输出：
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
+Google Play AAB：
+
+```bash
+./gradlew :app:bundleRelease
+```
+
+```text
+app/build/outputs/bundle/release/app-release.aab
+```
+
 ## 验证
 
 ```bash
@@ -34,6 +44,7 @@ app/build/outputs/apk/debug/app-debug.apk
 ```
 
 WebView 交互回归测试位于 `.ci/test_web_assets.py`，覆盖全部 100 个实验、移动端触摸滚动、控件、画布交互和独立数据栏。
+其中布局回归会在 `320×568`、`360×568` 与 `390×720` 三种视口逐个打开全部实验，确保主要控制内容默认可见；极端字体缩放或更矮窗口仍保留控制区滚动作为兜底。
 
 ## 项目结构
 

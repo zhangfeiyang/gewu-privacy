@@ -15,15 +15,28 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private lateinit var webView: WebView
+    private var pageReady = false
+    private var cssInsetTop = 0
+    private var cssInsetRight = 0
+    private var cssInsetBottom = 0
+    private var cssInsetLeft = 0
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
         window.statusBarColor = Color.rgb(12, 45, 74)
+        WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = false
         webView = WebView(this).apply {
             setBackgroundColor(Color.rgb(244, 247, 249))
             overScrollMode = WebView.OVER_SCROLL_NEVER
@@ -35,6 +48,11 @@ class MainActivity : ComponentActivity() {
             settings.mediaPlaybackRequiresUserGesture = false
             addJavascriptInterface(AndroidBridge(this@MainActivity), "NativeBridge")
             webViewClient = object : WebViewClient() {
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    pageReady = true
+                    pushNativeInsets()
+                }
+
                 override fun shouldOverrideUrlLoading(
                     view: WebView?,
                     request: WebResourceRequest?,
@@ -48,6 +66,20 @@ class MainActivity : ComponentActivity() {
             loadUrl("file:///android_asset/shell.html")
         }
         setContentView(webView)
+        ViewCompat.setOnApplyWindowInsetsListener(webView) { _, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                    WindowInsetsCompat.Type.displayCutout(),
+            )
+            val density = resources.displayMetrics.density
+            cssInsetTop = (insets.top / density).roundToInt()
+            cssInsetRight = (insets.right / density).roundToInt()
+            cssInsetBottom = (insets.bottom / density).roundToInt()
+            cssInsetLeft = (insets.left / density).roundToInt()
+            pushNativeInsets()
+            windowInsets
+        }
+        ViewCompat.requestApplyInsets(webView)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -76,6 +108,16 @@ class MainActivity : ComponentActivity() {
         webView.removeJavascriptInterface("NativeBridge")
         webView.destroy()
         super.onDestroy()
+    }
+
+    private fun pushNativeInsets() {
+        if (!pageReady || !::webView.isInitialized) return
+        webView.evaluateJavascript(
+            "window.setNativeInsets&&window.setNativeInsets({" +
+                "top:$cssInsetTop,right:$cssInsetRight," +
+                "bottom:$cssInsetBottom,left:$cssInsetLeft})",
+            null,
+        )
     }
 
     private class AndroidBridge(private val context: Context) {

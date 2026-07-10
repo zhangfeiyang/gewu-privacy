@@ -1,5 +1,69 @@
 from playwright.sync_api import sync_playwright
 
+BASE_URL = "http://127.0.0.1:8877/shell.html"
+LAYOUT_VIEWPORTS = ((320, 568), (360, 568), (390, 720))
+
+
+def verify_mobile_layout(browser, width: int, height: int) -> None:
+    errors: list[str] = []
+    page = browser.new_page(
+        viewport={"width": width, "height": height},
+        is_mobile=True,
+        has_touch=True,
+    )
+    page.on(
+        "console",
+        lambda message: errors.append(message.text)
+        if message.type == "error"
+        else None,
+    )
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(BASE_URL)
+    page.wait_for_load_state("networkidle")
+
+    sim_ids = page.evaluate("window.module.exports.SIMS.map(sim => sim.id)")
+    failures: list[str] = []
+    for sim_id in sim_ids:
+        page.locator(f'.sim-card[data-id="{sim_id}"]').click()
+        page.wait_for_function(
+            "document.getElementById('stage').dataset.layoutReady === 'true'"
+        )
+        layout = page.evaluate(
+            """() => {
+              const stage = document.getElementById('stage');
+              const canvas = document.getElementById('sim-canvas');
+              const panel = document.querySelector('.control-panel');
+              const keys = [...panel.querySelectorAll(
+                '.stepper-row,.action-button,.control'
+              )];
+              const last = keys.at(-1);
+              const panelRect = panel.getBoundingClientRect();
+              return {
+                title: document.getElementById('sim-title').textContent,
+                stageHeight: stage.getBoundingClientRect().height,
+                canvasHeight: canvas.getBoundingClientRect().height,
+                panelClient: panel.clientHeight,
+                panelScroll: panel.scrollHeight,
+                lastVisible: !last ||
+                  last.getBoundingClientRect().bottom <= panelRect.bottom + 1,
+              };
+            }"""
+        )
+        if (
+            layout["panelScroll"] > layout["panelClient"] + 1
+            or not layout["lastVisible"]
+        ):
+            failures.append(
+                f"{sim_id}({layout['title']}): panel "
+                f"{layout['panelClient']}/{layout['panelScroll']}, "
+                f"stage {layout['stageHeight']}, canvas {layout['canvasHeight']}"
+            )
+        page.locator("#sim-back").click()
+
+    page.close()
+    assert failures == [], f"{width}x{height} layout overflow:\n" + "\n".join(failures)
+    assert errors == [], f"{width}x{height} console errors:\n" + "\n".join(errors)
+
 
 def main() -> None:
     console_errors: list[str] = []
@@ -24,7 +88,7 @@ def main() -> None:
             lambda error: console_errors.append(str(error)),
         )
 
-        page.goto("http://127.0.0.1:8877/shell.html")
+        page.goto(BASE_URL)
         page.wait_for_load_state("networkidle")
 
         assert "100 个互动仿真" in page.locator("#brand-subtitle").inner_text()
@@ -255,6 +319,30 @@ def main() -> None:
                   u.items[0].x, u.items[0].y,
                   u.items[0].x + 35, u.items[0].y + 24
                 ],
+                ph: u => [
+                  u.cursor.x, u.cursor.y,
+                  u.scale.x + u.scale.w * 0.8, u.cursor.y
+                ],
+                concentration: u => [
+                  u.liquidHandle.x, u.liquidHandle.y,
+                  u.liquidHandle.x, u.cylinder.y + u.cylinder.h * 0.25
+                ],
+                chemmix: u => [
+                  u.reagents[0].cx, u.reagents[0].cy,
+                  u.beakerDrop.x + u.beakerDrop.w / 2,
+                  u.beakerDrop.y + u.beakerDrop.h / 2
+                ],
+                mlp: u => [
+                  u.palette.x, u.palette.y,
+                  u.hiddenZones[0].x + u.hiddenZones[0].w / 2,
+                  u.hiddenZones[0].y + u.hiddenZones[0].h / 2
+                ],
+                convnet: u => [
+                  u.input.x + u.input.cell * 1.5,
+                  u.input.y + u.input.cell * 1.5,
+                  u.input.x + u.input.cell * 10.5,
+                  u.input.y + u.input.cell * 10.5
+                ],
               };
               const errors = [];
               let exercised = 0;
@@ -361,7 +449,7 @@ def main() -> None:
               };
             }"""
         )
-        assert direct_interaction_results["count"] >= 12
+        assert direct_interaction_results["count"] >= 17
         assert direct_interaction_results["exercised"] == direct_interaction_results["count"]
         assert direct_interaction_results["errors"] == []
         assert direct_interaction_results["supportPixels"] > 20
@@ -371,6 +459,169 @@ def main() -> None:
         assert direct_interaction_results["circuitCurrent"] > 0.3
         assert direct_interaction_results["circuitSwitchOpen"] is False
         assert direct_interaction_results["circuitComponents"] == 5
+
+        builder_results = page.evaluate(
+            """() => {
+              const { getSim } = window.module.exports;
+              const canvas = document.createElement('canvas');
+              canvas.width = 390;
+              canvas.height = 420;
+              const ctx = canvas.getContext('2d');
+              ctx.__gwReadoutSink = () => {};
+              const paramsFor = sim => Object.fromEntries(
+                sim.params.map(param => [param.key, param.value])
+              );
+
+              const convnet = getSim('convnet');
+              const convState = convnet.init();
+              const convParams = paramsFor(convnet);
+              const numericLabels = [];
+              const originalFillText = ctx.fillText.bind(ctx);
+              ctx.fillText = (value, ...args) => {
+                numericLabels.push(String(value));
+                return originalFillText(value, ...args);
+              };
+              convState.img = convnet.makeImg(8);
+              convState.pos = 100;
+              convState.dirty = true;
+              convnet.draw(ctx, 390, 420, convState, convParams);
+              const digitPredictions = [];
+              for (let digit = 0; digit < 10; digit++) {
+                digitPredictions.push(convnet.recognize(
+                  convnet.makeImg(digit)
+                ).digit);
+              }
+              const lineImage = Array.from(
+                { length: 12 }, () => new Array(12).fill(0)
+              );
+              convnet.paintLine(lineImage, 0, 0, 11, 11, 1);
+              const continuousInk = lineImage.every((row, i) => row[i] === 1);
+              convnet.paintLine(lineImage, 0, 0, 11, 11, 0);
+              const continuousErase = lineImage.every((row, i) => row[i] === 0);
+
+              const mlp = getSim('mlp');
+              const mlpState = mlp.init();
+              const mlpParams = paramsFor(mlp);
+              mlpState.W = 390;
+              mlpState.H = 420;
+              mlpState._ui = mlp.layout(390, 420, mlpState);
+              const beforeWidth = mlpState.net.n1;
+              mlp.onDragStart(
+                mlpState, mlpParams,
+                mlpState._ui.palette.x, mlpState._ui.palette.y
+              );
+              const addZone = mlpState._ui.hiddenZones[0];
+              mlp.onDragEnd(
+                mlpState, mlpParams,
+                addZone.x + addZone.w / 2, addZone.y + addZone.h / 2
+              );
+              const addedWidth = mlpState.net.n1;
+              mlpState._ui = mlp.layout(390, 420, mlpState);
+              const train = mlpState._ui.train;
+              const initialLoss = mlp.trainStep(
+                mlpState.net, mlpState.data, 0
+              );
+              mlp.onDragStart(
+                mlpState, mlpParams,
+                train.x + train.w / 2, train.y + train.h / 2
+              );
+              for (let i = 0; i < 220; i++) {
+                mlp.step(mlpState, mlpParams, 1 / 60);
+              }
+              mlp.onDragEnd(
+                mlpState, mlpParams,
+                train.x + train.w / 2, train.y + train.h / 2
+              );
+              const trainedLoss = mlp.trainStep(
+                mlpState.net, mlpState.data, 0
+              );
+
+              const chemmix = getSim('chemmix');
+              const chemistryState = chemmix.init();
+              chemmix.draw(ctx, 390, 420, chemistryState, {});
+              const drop = chemistryState._ui.beakerDrop;
+              const addReagent = index => {
+                const bottle = chemistryState._ui.reagents[index];
+                chemmix.onDragStart(
+                  chemistryState, {}, bottle.cx, bottle.cy
+                );
+                chemmix.onDragMove(
+                  chemistryState, {},
+                  drop.x + drop.w / 2, drop.y + drop.h / 2
+                );
+                chemmix.onDragEnd(
+                  chemistryState, {},
+                  drop.x + drop.w / 2, drop.y + drop.h / 2
+                );
+              };
+              addReagent(0);
+              addReagent(3);
+
+              const electrolysis = getSim('electrolysis');
+              const electroState = electrolysis.init();
+              const electroParams = paramsFor(electrolysis);
+              electrolysis.draw(ctx, 390, 420, electroState, electroParams);
+              const powerSwitch = electroState._ui.switch;
+              electrolysis.onTap(
+                electroState, electroParams,
+                powerSwitch.x + powerSwitch.w / 2,
+                powerSwitch.y + powerSwitch.h / 2
+              );
+              electrolysis.step(electroState, electroParams, 1);
+
+              const projectile = getSim('projectile');
+              const projectileState = projectile.init();
+              const projectileParams = paramsFor(projectile);
+              projectile.draw(ctx, 390, 420, projectileState, projectileParams);
+              const aim = projectileState._ui;
+              projectile.onDragStart(
+                projectileState, projectileParams, aim.muzzleX, aim.muzzleY
+              );
+              projectile.onDragMove(
+                projectileState, projectileParams,
+                aim.baseX + aim.maxBarrel * 0.8,
+                aim.baseY - aim.maxBarrel * 0.45
+              );
+              projectile.onDragEnd(
+                projectileState, projectileParams,
+                aim.baseX + aim.maxBarrel * 0.8,
+                aim.baseY - aim.maxBarrel * 0.45
+              );
+
+              return {
+                classifierAccuracy: convState.classifierAccuracy,
+                digitPredictions,
+                numericLabels: numericLabels.filter(
+                  value => /^[+-]?\\d+(?:\\.\\d+)?$/.test(value)
+                ).length,
+                continuousInk,
+                continuousErase,
+                mlpWidth: [beforeWidth, addedWidth],
+                mlpEpoch: mlpState.epoch,
+                mlpTrainingStopped: !mlpState.training,
+                mlpLoss: [initialLoss, trainedLoss],
+                chemistryRecipe: chemistryState.recipe.slice(),
+                chemistryMixed: chemistryState.mixed,
+                electrolysisRunning: electroState.running,
+                electrolysisHydrogen: electroState.h2,
+                projectileShots: projectileState.shots.length,
+              };
+            }"""
+        )
+        assert builder_results["classifierAccuracy"] >= 0.98
+        assert builder_results["digitPredictions"] == list(range(10))
+        assert builder_results["numericLabels"] >= 269
+        assert builder_results["continuousInk"]
+        assert builder_results["continuousErase"]
+        assert builder_results["mlpWidth"][1] == builder_results["mlpWidth"][0] + 1
+        assert builder_results["mlpEpoch"] > 500
+        assert builder_results["mlpTrainingStopped"]
+        assert builder_results["mlpLoss"][1] < builder_results["mlpLoss"][0]
+        assert builder_results["chemistryRecipe"] == ["稀盐酸", "锌粒"]
+        assert builder_results["chemistryMixed"]
+        assert builder_results["electrolysisRunning"]
+        assert builder_results["electrolysisHydrogen"] > 0
+        assert builder_results["projectileShots"] == 1
 
         simulation_errors = page.evaluate(
             """() => {
@@ -401,9 +652,16 @@ def main() -> None:
         )
         assert simulation_errors == [], "\n".join(simulation_errors)
         assert console_errors == [], "\n".join(console_errors)
+        page.close()
+
+        for width, height in LAYOUT_VIEWPORTS:
+            verify_mobile_layout(browser, width, height)
         browser.close()
 
-    print("Verified 100 simulations, home features, controls, steppers, and canvas input.")
+    print(
+        "Verified 100 simulations, home features, controls, steppers, canvas input, "
+        "and compact layouts at 320x568, 360x568, and 390x720."
+    )
 
 
 if __name__ == "__main__":

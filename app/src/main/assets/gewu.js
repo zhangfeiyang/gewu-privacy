@@ -16,7 +16,7 @@
   const RECENT_KEY = "gw_recent";
   const VISITED_KEY = "gw_visited";
   const LANG_KEY = "gw_lang";
-  const VERSION = "3.9.0";
+  const VERSION = "4.0.0";
 
   const $ = id => document.getElementById(id);
   const homeView = $("home-view");
@@ -43,6 +43,8 @@
   let readoutTimer = 0;
   let lastReadoutUpdate = 0;
   let lastReadoutSignature = "";
+  let stageLayoutId = 0;
+  let canvasHintText = "";
 
   function readList(key) {
     try {
@@ -67,6 +69,14 @@
 
   function t(text) {
     return tr(text);
+  }
+
+  function uiText(zh, en) {
+    return getLanguage() === "en" ? en : zh;
+  }
+
+  function reducedMotion() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
   function meta(sim) {
@@ -164,6 +174,9 @@
 
   function simCard(sim, favorites) {
     const m = meta(sim);
+    const interaction = sim.onDragStart ?
+      { icon: "↔", label: uiText("可拖动", "Drag") } :
+      (sim.onTap ? { icon: "●", label: uiText("可点按", "Tap") } : null);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "sim-card";
@@ -173,6 +186,7 @@
       <span class="sim-copy">
         <strong>${m.title}${favorites.includes(sim.id) ? '<span class="fav-badge">⭐</span>' : ""}</strong>
         <small>${m.sub}</small>
+        ${interaction ? `<span class="interaction-badge"><span aria-hidden="true">${interaction.icon}</span>${interaction.label}</span>` : ""}
       </span>
       <span class="sim-arrow">›</span>`;
 
@@ -262,7 +276,10 @@
         }
         requestAnimationFrame(() => {
           const target = $(`category-${index}`);
-          if (target) homeContent.scrollTo({ top: target.offsetTop - 4, behavior: "smooth" });
+          if (target) homeContent.scrollTo({
+            top: target.offsetTop - 4,
+            behavior: reducedMotion() ? "auto" : "smooth",
+          });
         });
       });
       return button;
@@ -333,40 +350,97 @@
     const m = meta(sim);
     $("sim-title").textContent = m.title;
     $("sim-subtitle").textContent = m.sub;
-    applyStageHeight(sim);
     renderSteppers();
     renderActions();
     renderControls();
     const hasDirectInteraction = Boolean(sim.onTap || sim.onDragStart);
-    $("canvas-hint").textContent = sim.hint ?
+    canvasHintText = sim.hint ?
       t(sim.hint) :
       (sim.onDragStart ? t("直接拖动画面中的物体") : t("点按画布进行交互"));
-    $("canvas-hint").classList.toggle("hidden", !hasDirectInteraction);
-    clearTimeout(canvasHintTimer);
+    const canvasFrame = canvas.parentElement;
+    canvasFrame.classList.toggle("is-interactive", hasDirectInteraction);
+    canvasFrame.classList.remove("is-dragging");
+    canvas.setAttribute("aria-label", hasDirectInteraction ? canvasHintText : uiText("实验画布", "Simulation canvas"));
     if (hasDirectInteraction) {
-      canvasHintTimer = window.setTimeout(
-        () => $("canvas-hint").classList.add("hidden"),
-        3200,
-      );
+      showCanvasHint(canvasHintText, false, 3200);
+    } else {
+      hideCanvasHint();
     }
+    $("stage").dataset.layoutReady = "false";
     switchView("sim");
     requestAnimationFrame(() => {
+      applyStageHeight(sim);
       resizeCanvas();
       renderFrame(0);
       if (!sim.static) startAnimation();
     });
     if (!localStorage.getItem("gw_hinted")) {
       localStorage.setItem("gw_hinted", "1");
-      showToast(sim.onDragStart ? sim.hint : "拖动下方滑块，观察现象变化", 2600);
+      showToast(sim.onDragStart ? (sim.hint || "直接拖动画面中的物体") : "拖动下方滑块，观察现象变化", 2600);
     }
   }
 
-  function applyStageHeight(sim) {
+  function hideCanvasHint() {
+    clearTimeout(canvasHintTimer);
+    canvasHintTimer = 0;
+    const hint = $("canvas-hint");
+    hint.classList.remove("dragging");
+    hint.classList.add("hidden");
+  }
+
+  function showCanvasHint(text, dragging = false, autoHide = 0) {
+    clearTimeout(canvasHintTimer);
+    canvasHintTimer = 0;
+    const hint = $("canvas-hint");
+    hint.textContent = text;
+    hint.classList.toggle("dragging", dragging);
+    hint.classList.remove("hidden");
+    if (autoHide > 0) {
+      canvasHintTimer = window.setTimeout(hideCanvasHint, autoHide);
+    }
+  }
+
+  function naturalControlHeight() {
+    const panel = document.querySelector(".control-panel");
+    const content = $("control-content");
+    const styles = getComputedStyle(panel);
+    const padding = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom);
+    return Math.ceil(content.scrollHeight + padding + 2);
+  }
+
+  function preferredStageHeight(sim, viewportHeight) {
     const count = sim.params.length;
-    const ratio = count >= 5 ? 0.34 : count === 4 ? 0.39 :
+    const fallbackRatio = count >= 5 ? 0.34 : count === 4 ? 0.39 :
       count === 3 ? 0.43 : count === 2 ? 0.47 : 0.5;
-    const height = Math.max(240, Math.min(470, Math.round(window.innerHeight * ratio)));
+    const configuredRatio = Number(sim.stageRatio);
+    const ratio = Number.isFinite(configuredRatio) ?
+      Math.max(.2, Math.min(.82, configuredRatio)) : fallbackRatio;
+    const configuredMinimum = Number(sim.stageMinHeight);
+    const minimum = Number.isFinite(configuredMinimum) ?
+      Math.max(80, configuredMinimum) : (innerWidth > innerHeight ? 140 : 168);
+    return Math.min(500, Math.max(minimum, Math.round(viewportHeight * ratio)));
+  }
+
+  function applyStageHeight(sim = currentSim) {
+    if (!sim || currentView !== "sim") return;
+    const viewportHeight = simView.clientHeight || window.innerHeight;
+    const headerHeight = simView.querySelector(".sim-header").getBoundingClientRect().height;
+    const maxForControls = Math.max(0, viewportHeight - headerHeight - naturalControlHeight());
+    const hardMinimum = innerWidth > innerHeight ? 110 : 144;
+    const height = Math.max(hardMinimum, Math.min(preferredStageHeight(sim, viewportHeight), maxForControls));
     $("stage").style.setProperty("--stage-height", `${height}px`);
+    $("stage").dataset.layoutReady = "true";
+  }
+
+  function requestStageLayout() {
+    if (!currentSim || currentView !== "sim") return;
+    $("stage").dataset.layoutReady = "false";
+    if (stageLayoutId) cancelAnimationFrame(stageLayoutId);
+    stageLayoutId = requestAnimationFrame(() => {
+      stageLayoutId = 0;
+      applyStageHeight();
+      resizeCanvas();
+    });
   }
 
   function syncControlsFromParams() {
@@ -401,8 +475,13 @@
         $(valueId).textContent = t(param.fmt(value));
         if (currentSim.static) renderFrame(0);
       });
+      input.addEventListener("pointerdown", () => wrapper.classList.add("is-adjusting"));
+      ["pointerup", "pointercancel", "blur"].forEach(type => {
+        input.addEventListener(type, () => wrapper.classList.remove("is-adjusting"));
+      });
       return wrapper;
     }));
+    requestStageLayout();
   }
 
   function actionLabel(action) {
@@ -426,6 +505,7 @@
       button.dataset.index = index;
       return button;
     }));
+    requestStageLayout();
   }
 
   function renderSteppers() {
@@ -435,9 +515,9 @@
       row.className = "stepper-row";
       row.innerHTML = `
         <span class="stepper-label">${t(stepper.label)}</span>
-        <button type="button" class="stepper-button minus" style="color:${stepper.color}">−</button>
+        <button type="button" class="stepper-button minus" style="color:${stepper.color}" aria-label="${uiText("减少", "Decrease")} ${t(stepper.label)}">−</button>
         <span class="stepper-value" style="color:${stepper.color}">${stepper.get(state)}</span>
-        <button type="button" class="stepper-button plus" style="color:${stepper.color}">+</button>`;
+        <button type="button" class="stepper-button plus" style="color:${stepper.color}" aria-label="${uiText("增加", "Increase")} ${t(stepper.label)}">+</button>`;
       const change = delta => {
         const next = Math.max(stepper.min, Math.min(stepper.max, stepper.get(state) + delta));
         stepper.set(state, next);
@@ -449,6 +529,7 @@
       row.querySelector(".plus").addEventListener("click", () => change(1));
       return row;
     }));
+    requestStageLayout();
   }
 
   function resizeCanvas() {
@@ -514,66 +595,120 @@
     return false;
   };
 
+  window.setNativeInsets = insets => {
+    const source = insets && typeof insets === "object" ? insets : {};
+    const value = key => {
+      const parsed = Number(source[key]);
+      return Number.isFinite(parsed) ? Math.max(0, Math.min(256, parsed)) : 0;
+    };
+    const root = document.documentElement;
+    ["top", "right", "bottom", "left"].forEach(side => {
+      root.style.setProperty(`--native-inset-${side}`, `${value(side)}px`);
+    });
+    requestStageLayout();
+  };
+
   function setupCanvasInteraction() {
+    let activePointerId = null;
     let down = null;
+    let lastPoint = null;
     let dragging = false;
     const point = event => {
       const rect = canvas.getBoundingClientRect();
       return { x: event.clientX - rect.left, y: event.clientY - rect.top };
     };
+    const releasePointer = pointerId => {
+      activePointerId = null;
+      try {
+        if (canvas.hasPointerCapture(pointerId)) canvas.releasePointerCapture(pointerId);
+      } catch (_) {}
+    };
+    const resetDragVisuals = () => {
+      canvas.parentElement.classList.remove("is-dragging");
+      $("canvas-hint").classList.remove("dragging");
+    };
+    const syncAfterGesture = () => {
+      syncControlsFromParams();
+      renderActions();
+      renderSteppers();
+      renderFrame(0);
+      requestStageLayout();
+    };
+    const finishDrag = (event, cancelled) => {
+      if (activePointerId === null || event.pointerId !== activePointerId) return false;
+      const pointerId = activePointerId;
+      if (dragging && currentSim && currentSim.onDragEnd) {
+        const p = lastPoint || point(event);
+        currentSim.onDragEnd(state, paramValues, p.x, p.y);
+      }
+      const wasDragging = dragging;
+      dragging = false;
+      down = null;
+      lastPoint = null;
+      releasePointer(pointerId);
+      resetDragVisuals();
+      if (wasDragging) {
+        syncAfterGesture();
+        showCanvasHint(
+          cancelled ?
+            uiText("操作已取消，状态已同步", "Gesture cancelled · state synced") :
+            uiText("已更新，可继续拖动", "Updated · drag again"),
+          false,
+          1100,
+        );
+        if (!cancelled) haptic();
+      }
+      return wasDragging;
+    };
     canvas.addEventListener("pointerdown", event => {
+      if (activePointerId !== null || event.isPrimary === false || event.button > 0) return;
+      activePointerId = event.pointerId;
       down = { x: event.clientX, y: event.clientY };
-      canvas.setPointerCapture(event.pointerId);
+      lastPoint = point(event);
+      try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
       if (currentSim && currentSim.onDragStart) {
-        const p = point(event);
+        const p = lastPoint;
         dragging = currentSim.onDragStart(state, paramValues, p.x, p.y) === true;
         if (dragging) {
           event.preventDefault();
+          canvas.parentElement.classList.add("is-dragging");
+          showCanvasHint(uiText("正在拖动，松手完成", "Dragging · release to apply"), true);
           syncControlsFromParams();
           renderActions();
+          renderSteppers();
           renderFrame(0);
         }
       }
     });
     canvas.addEventListener("pointermove", event => {
-      if (!dragging || !currentSim || !currentSim.onDragMove) return;
+      if (event.pointerId !== activePointerId || !dragging || !currentSim || !currentSim.onDragMove) return;
       const p = point(event);
+      lastPoint = p;
       currentSim.onDragMove(state, paramValues, p.x, p.y);
       event.preventDefault();
       syncControlsFromParams();
       renderFrame(0);
     });
     canvas.addEventListener("pointerup", event => {
-      if (dragging) {
-        const p = point(event);
-        if (currentSim && currentSim.onDragEnd) {
-          currentSim.onDragEnd(state, paramValues, p.x, p.y);
-        }
-        dragging = false;
-        down = null;
-        syncControlsFromParams();
-        renderActions();
-        renderFrame(0);
-        haptic();
-        return;
-      }
-      if (!down || !currentSim) return;
-      if (!currentSim.onTap) { down = null; return; }
+      if (event.pointerId !== activePointerId) return;
+      lastPoint = point(event);
+      if (dragging && finishDrag(event, false)) return;
+      const pointerId = activePointerId;
+      if (!down || !currentSim) { releasePointer(pointerId); return; }
+      if (!currentSim.onTap) { down = null; releasePointer(pointerId); return; }
       const moved = Math.hypot(event.clientX - down.x, event.clientY - down.y);
       down = null;
+      lastPoint = null;
+      releasePointer(pointerId);
       if (moved > 12) return;
       const p = point(event);
       currentSim.onTap(state, paramValues, p.x, p.y);
-      if (currentSim.static) renderFrame(0);
+      syncAfterGesture();
+      showCanvasHint(uiText("已更新，继续点按探索", "Updated · tap again"), false, 1100);
+      haptic();
     });
-    canvas.addEventListener("pointercancel", event => {
-      if (dragging && currentSim && currentSim.onDragEnd) {
-        const p = point(event);
-        currentSim.onDragEnd(state, paramValues, p.x, p.y);
-      }
-      dragging = false;
-      down = null;
-    });
+    canvas.addEventListener("pointercancel", event => finishDrag(event, true));
+    canvas.addEventListener("lostpointercapture", event => finishDrag(event, true));
   }
 
   function applyTheme(dark) {
@@ -620,7 +755,7 @@
     $("lang-zh").textContent = t("中文");
     $("lang-en").textContent = "English";
     $("about-copy-1").textContent = t("格物实验是一款原生封装、完全离线的互动仿真实验室，覆盖力学、波动与光、电磁、热学、原子、化学与人工智能等领域。");
-    $("about-copy-2").textContent = t("拖动滑块改变条件，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。");
+    $("about-copy-2").textContent = t("直接拖动、按压、连接、投料和手写，实时观察现象与数据；长按首页卡片可收藏。应用取“格物致知”之意，教学理念受 PhET 启发。");
     $("phet-link").textContent = t("访问 PhET 官网 ↗");
     renderAboutStats();
     renderLanguageButtons();
@@ -644,10 +779,15 @@
       const m = meta(currentSim);
       $("sim-title").textContent = m.title;
       $("sim-subtitle").textContent = m.sub;
+      canvasHintText = currentSim.hint ? t(currentSim.hint) :
+        (currentSim.onDragStart ? t("直接拖动画面中的物体") : t("点按画布进行交互"));
+      canvas.setAttribute("aria-label", currentSim.onTap || currentSim.onDragStart ?
+        canvasHintText : uiText("实验画布", "Simulation canvas"));
       renderSteppers();
       renderActions();
       renderControls();
       renderFrame(0);
+      requestStageLayout();
     }
   }
 
@@ -696,6 +836,14 @@
     setupCanvasInteraction();
     resizeObserver = new ResizeObserver(resizeCanvas);
     resizeObserver.observe(canvas.parentElement);
+    window.addEventListener("resize", requestStageLayout);
+    window.addEventListener("orientationchange", () => {
+      requestStageLayout();
+      window.setTimeout(requestStageLayout, 160);
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", requestStageLayout);
+    }
     document.addEventListener("visibilitychange", () => {
       window.setAppVisible(!document.hidden);
     });

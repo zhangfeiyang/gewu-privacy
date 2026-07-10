@@ -74,15 +74,17 @@
       </header>
       <section id="stage" class="stage">
         <div class="canvas-frame">
-          <canvas id="sim-canvas"></canvas>
-          <div id="canvas-hint" class="canvas-hint hidden">点按画布进行交互</div>
+          <canvas id="sim-canvas" tabindex="0" role="application" aria-label="互动实验画布"></canvas>
         </div>
+        <div id="canvas-hint" class="canvas-hint hidden" role="status">点按画布进行交互</div>
         <div id="stage-readout" class="readout-dock hidden" aria-live="polite"></div>
       </section>
       <section class="control-panel">
-        <div id="stepper-list"></div>
-        <div id="action-list" class="action-list"></div>
-        <div id="control-list"></div>
+        <div id="control-content" class="control-content">
+          <div id="stepper-list"></div>
+          <div id="action-list" class="action-list"></div>
+          <div id="control-list"></div>
+        </div>
       </section>
     </main>
 
@@ -96,7 +98,7 @@
         <div class="about-hero">
           <div class="about-orbit"><span>⚛</span></div>
           <h1 id="about-hero-title">格物实验</h1>
-          <p id="about-version">版本 3.9.0</p>
+          <p id="about-version">版本 4.0.0</p>
         </div>
         <div id="category-stats" class="category-stats"></div>
         <div class="setting-card">
