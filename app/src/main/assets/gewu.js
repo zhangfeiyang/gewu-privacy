@@ -498,6 +498,7 @@
       button.addEventListener("click", () => {
         action.on(state, paramValues);
         haptic();
+        syncControlsFromParams();
         renderActions();
         renderSteppers();
         if (currentSim.static) renderFrame(0);

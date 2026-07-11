@@ -1575,8 +1575,13 @@ const pendulum = {
     { key: 'damping', label: '阻尼', min: 0, max: 1.5, step: 0.05, value: 0.1, fmt: v => v.toFixed(2) },
     { key: 'gravity', label: '重力', min: 1, max: 25, step: 0.1, value: 9.81, fmt: v => v.toFixed(2) }
   ],
-  actions: [{ label: '重置', on(s, p) { s.running = false; s.dragging = false; s.theta = p.amp * Math.PI / 180; s.omega = 0; } }],
-  init() { return { theta: 35 * Math.PI / 180, omega: 0, running: false }; },
+  actions: [
+    { label: '地球 9.81', on(s, p) { p.gravity = 9.81; s.running = false; } },
+    { label: '月球 1.62', on(s, p) { p.gravity = 1.62; s.running = false; } },
+    { label: '火星 3.71', on(s, p) { p.gravity = 3.71; s.running = false; } },
+    { label: '重置', on(s, p) { s.running = false; s.dragging = false; s.theta = p.amp * Math.PI / 180; s.omega = 0; s.phaseTrace = []; } }
+  ],
+  init() { return { theta: 35 * Math.PI / 180, omega: 0, running: false, phaseTrace: [] }; },
   step(s, p, dt) {
     if (!s.running) {
       if (!s.dragging) s.theta = p.amp * Math.PI / 180;
@@ -1584,6 +1589,8 @@ const pendulum = {
     }
     const sub = 8, h = dt / sub;
     for (let i = 0; i < sub; i++) { const a = -(p.gravity / p.length) * Math.sin(s.theta) - p.damping * s.omega; s.omega += a * h; s.theta += s.omega * h; }
+    s.phaseTrace.push([s.theta, s.omega]);
+    if (s.phaseTrace.length > 120) s.phaseTrace.shift();
   },
   hint: '抓住摆球拖到任意角度，松手释放',
   onDragStart(s, p, x, y) {
@@ -1608,8 +1615,23 @@ const pendulum = {
     s._ui = { px, py, bx, by };
     const v = p.length * s.omega, ke = 0.5 * v * v, pe = p.gravity * p.length * (1 - Math.cos(s.theta));
     energyBars(ctx, W, H, [['动能', ke, '#43A047'], ['势能', pe, '#1E88E5'], ['总能', ke + pe, '#455A64']]);
+    // Compact phase portrait makes the angle-angular-velocity relationship measurable.
+    const gx = W * 0.055, gy = H * 0.66, gw = W * 0.28, gh = H * 0.26;
+    ctx.fillStyle = 'rgba(255,255,255,0.82)'; roundRect(ctx, gx, gy, gw, gh, 8); ctx.fill();
+    ctx.strokeStyle = 'rgba(69,90,100,0.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(gx + gw / 2, gy + 8); ctx.lineTo(gx + gw / 2, gy + gh - 10); ctx.moveTo(gx + 8, gy + gh / 2); ctx.lineTo(gx + gw - 8, gy + gh / 2); ctx.stroke();
+    if (s.phaseTrace.length > 1) {
+      ctx.strokeStyle = '#8E24AA'; ctx.lineWidth = 2; ctx.beginPath();
+      s.phaseTrace.forEach((point, i) => {
+        const x = gx + gw / 2 + Math.max(-1.4, Math.min(1.4, point[0])) / 1.4 * (gw * 0.42);
+        const y = gy + gh / 2 - Math.max(-4, Math.min(4, point[1])) / 4 * (gh * 0.38);
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.stroke();
+    }
+    ctx.fillStyle = '#5E35B1'; ctx.font = '10px sans-serif'; ctx.fillText('相图 θ-ω', gx + 8, gy + 14);
     const T = 2 * Math.PI * Math.sqrt(p.length / p.gravity);
-    readout(ctx, [['周期', T.toFixed(2) + ' s'], ['角度', (s.theta * 180 / Math.PI).toFixed(0) + ' °']]);
+    readout(ctx, [['环境', p.gravity === 1.62 ? '月球' : (p.gravity === 3.71 ? '火星' : (Math.abs(p.gravity - 9.81) < 0.01 ? '地球' : '自定义'))], ['周期', T.toFixed(2) + ' s'], ['角度', (s.theta * 180 / Math.PI).toFixed(0) + ' °']]);
   }
 };
 
@@ -1747,9 +1769,12 @@ const collision = {
   ],
   actions: [
     { label: s => s.running ? '⏸ 暂停' : '▶ 开始', primary: true, on(s) { s.running = !s.running; } },
+    { label: '弹性碰撞', on(s, p) { p.e = 1; s.running = false; } },
+    { label: '完全非弹性', on(s, p) { p.e = 0; s.running = false; } },
+    { label: s => s.comFrame ? '质心系 ✓' : '实验室系', on(s) { s.comFrame = !s.comFrame; } },
     { label: '重置', on(s, p) { s.running = false; s.x1 = 5; s.x2 = 15; s.v1 = p.v1i; s.v2 = p.v2i; } }
   ],
-  init() { return { x1: 5, x2: 15, v1: 4, v2: -2, running: false, buzz: 0 }; },
+  init() { return { x1: 5, x2: 15, v1: 4, v2: -2, running: false, buzz: 0, comFrame: false }; },
   step(s, p, dt) {
     const r1 = 0.5 + Math.pow(p.m1, 1 / 3) * 0.6, r2 = 0.5 + Math.pow(p.m2, 1 / 3) * 0.6;
     if (!s.running) { s.v1 = p.v1i; s.v2 = p.v2i; return; }
@@ -1781,7 +1806,8 @@ const collision = {
   onDragMove(s, p, x) {
     const u = s._ui;
     if (!u) return;
-    const wx = (x - u.left) / u.scale;
+    // Convert the displayed coordinate back to the laboratory coordinate.
+    const wx = (x - u.left) / u.scale + u.displayOffset;
     if (s.dragBall === 1) s.x1 = Math.max(u.r1m, Math.min(s.x2 - u.r1m - u.r2m, wx));
     else if (s.dragBall === 2) s.x2 = Math.min(20 - u.r2m, Math.max(s.x1 + u.r1m + u.r2m, wx));
   },
@@ -1796,14 +1822,18 @@ const collision = {
       const X = left + x * scale; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(X, cy, r * scale, 0, 7); ctx.fill();
       if (Math.abs(v) > 0.05) { const tip = X + v * scale * 0.5; ctx.strokeStyle = ar; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(X, cy); ctx.lineTo(tip, cy); ctx.stroke(); const d = v > 0 ? 1 : -1; ctx.beginPath(); ctx.moveTo(tip, cy); ctx.lineTo(tip - d * 9, cy - 6); ctx.moveTo(tip, cy); ctx.lineTo(tip - d * 9, cy + 6); ctx.stroke(); }
     };
-    ball(s.x1, r1, '#E53935', s.v1, '#B71C1C');
-    ball(s.x2, r2, '#1E88E5', s.v2, '#0D47A1');
+    const vCom = (p.m1 * s.v1 + p.m2 * s.v2) / (p.m1 + p.m2);
+    // Translate positions into a centred coordinate system for the centre-of-mass view.
+    const xCom = (p.m1 * s.x1 + p.m2 * s.x2) / (p.m1 + p.m2);
+    const displayOffset = s.comFrame ? xCom - 10 : 0;
+    ball(s.x1 - displayOffset, r1, '#E53935', s.v1 - (s.comFrame ? vCom : 0), '#B71C1C');
+    ball(s.x2 - displayOffset, r2, '#1E88E5', s.v2 - (s.comFrame ? vCom : 0), '#0D47A1');
     s._ui = {
-      x1: left + s.x1 * scale, x2: left + s.x2 * scale, cy,
-      r1: r1 * scale, r2: r2 * scale, r1m: r1, r2m: r2, left, scale
+      x1: left + (s.x1 - displayOffset) * scale, x2: left + (s.x2 - displayOffset) * scale, cy,
+      r1: r1 * scale, r2: r2 * scale, r1m: r1, r2m: r2, left, scale, displayOffset
     };
     const pp = p.m1 * s.v1 + p.m2 * s.v2, ke = 0.5 * p.m1 * s.v1 * s.v1 + 0.5 * p.m2 * s.v2 * s.v2;
-    readout(ctx, [['总动量', pp.toFixed(1)], ['总动能', ke.toFixed(1)], ['v1', s.v1.toFixed(1)], ['v2', s.v2.toFixed(1)]]);
+    readout(ctx, [['参考系', s.comFrame ? '质心系' : '实验室系'], ['总动量', pp.toFixed(1)], ['总动能', ke.toFixed(1)], ['v质心', vCom.toFixed(2)], ['碰撞类型', p.e === 1 ? '弹性' : (p.e === 0 ? '完全非弹性' : '部分非弹性')]]);
   }
 };
 
@@ -2411,27 +2441,40 @@ const photoelectric = {
   params: [
     { key: 'wavelength', label: '波长', min: 200, max: 700, step: 10, value: 400, fmt: v => v.toFixed(0) + ' nm' },
     { key: 'intensity', label: '光强', min: 0, max: 100, step: 5, value: 60, fmt: v => v.toFixed(0) + ' %' },
-    { key: 'work', label: '逸出功', min: 1, max: 5, step: 0.1, value: 2.3, fmt: v => v.toFixed(1) + ' eV' }
+    { key: 'work', label: '逸出功', min: 1, max: 5, step: 0.1, value: 2.3, fmt: v => v.toFixed(1) + ' eV' },
+    { key: 'voltage', label: '外加电压', min: -3, max: 3, step: 0.1, value: 0, fmt: v => (v >= 0 ? '+' : '') + v.toFixed(1) + ' V' }
   ],
   actions: [], init() { return { el: [], acc: 0 }; },
   step(s, p, dt) {
     if (dt <= 0) return;
-    const E = 1240 / p.wavelength, eject = E > p.work;
-    s.acc += dt * (eject ? p.intensity / 20 : 0);
+    const E = 1240 / p.wavelength, maxKe = Math.max(0, E - p.work);
+    const currentAt = voltage => maxKe <= 0 ? 0 : p.intensity * 0.1 * Math.max(0, Math.min(1, (maxKe + voltage) / Math.max(maxKe, 0.01)));
+    const current = currentAt(p.voltage);
+    s.acc += dt * current / 20;
     while (s.acc > 1) { s.acc -= 1; s.el.push({ x: 0, y: (Math.random() - 0.5) * 60, ke: Math.max(0, E - p.work) }); }
-    s.el.forEach(e => { e.x += (0.4 + e.ke * 0.3) * dt; });
-    s.el = s.el.filter(e => e.x < 1);
+    s.el.forEach(e => { e.x += (0.4 + (e.ke + p.voltage) * 0.3) * dt; });
+    s.el = s.el.filter(e => e.x > -0.03 && e.x < 1);
   },
   draw(ctx, W, H, s, p) {
     ctx.fillStyle = '#263238'; ctx.fillRect(0, 0, W, H);
-    const E = 1240 / p.wavelength, eject = E > p.work, plateX = W * 0.25, cy = H * 0.45, collX = W * 0.8;
+    const E = 1240 / p.wavelength, eject = E > p.work, maxKe = Math.max(0, E - p.work), plateX = W * 0.25, cy = H * 0.35, collX = W * 0.8;
+    const currentAt = voltage => maxKe <= 0 ? 0 : p.intensity * 0.1 * Math.max(0, Math.min(1, (maxKe + voltage) / Math.max(maxKe, 0.01)));
     const col = wlColor(Math.max(380, Math.min(680, p.wavelength)));
     ctx.strokeStyle = col; ctx.globalAlpha = 0.5 + p.intensity / 200; ctx.lineWidth = 6;
     ctx.beginPath(); ctx.moveTo(0, H * 0.15); ctx.lineTo(plateX, cy); ctx.stroke(); ctx.globalAlpha = 1;
     ctx.fillStyle = '#90A4AE'; ctx.fillRect(plateX - 10, cy - 70, 10, 140);
     ctx.fillStyle = '#607D8B'; ctx.fillRect(collX, cy - 70, 10, 140);
     s.el.forEach(e => { const X = plateX + e.x * (collX - plateX); ctx.fillStyle = '#42A5F5'; ctx.beginPath(); ctx.arc(X, cy + e.y, 4, 0, 7); ctx.fill(); });
-    readout(ctx, [['光子能量', E.toFixed(2) + ' eV'], ['逸出功', p.work.toFixed(1) + ' eV'], ['最大动能', Math.max(0, E - p.work).toFixed(2) + ' eV'], ['电流', eject ? (p.intensity * 0.1).toFixed(1) + ' μA' : '0（无）']]);
+    // I-V curve: negative voltage stops low-energy electrons, positive voltage reaches saturation.
+    const gx = W * 0.12, gy = H * 0.67, gw = W * 0.76, gh = H * 0.23, maxI = Math.max(1, p.intensity * 0.1);
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(gx, gy + gh); ctx.lineTo(gx + gw, gy + gh); ctx.moveTo(gx + gw / 2, gy); ctx.lineTo(gx + gw / 2, gy + gh); ctx.stroke();
+    ctx.strokeStyle = '#FFCA28'; ctx.lineWidth = 2.5; ctx.beginPath();
+    for (let i = 0; i <= 40; i++) { const v = -3 + i * 6 / 40, x = gx + i * gw / 40, y = gy + gh - currentAt(v) / maxI * gh; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.stroke();
+    const markerX = gx + (p.voltage + 3) / 6 * gw, markerY = gy + gh - currentAt(p.voltage) / maxI * gh;
+    ctx.fillStyle = '#FFF176'; ctx.beginPath(); ctx.arc(markerX, markerY, 4, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ECEFF1'; ctx.font = '11px sans-serif'; ctx.fillText('I-V 特性', gx, gy - 7); ctx.fillText('−V', gx, gy + gh + 14); ctx.fillText('+V', gx + gw - 15, gy + gh + 14);
+    readout(ctx, [['光子能量', E.toFixed(2) + ' eV'], ['逸出功', p.work.toFixed(1) + ' eV'], ['最大动能', maxKe.toFixed(2) + ' eV'], ['外加电压', p.voltage.toFixed(1) + ' V'], ['电流', currentAt(p.voltage).toFixed(1) + ' μA']]);
   }
 };
 
